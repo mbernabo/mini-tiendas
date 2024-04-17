@@ -1,6 +1,6 @@
 # Las Mini Tiendas de Once
 
-Un proyecto Full Stack para practicar las capacidades después de 1 año de práctica
+Un proyecto Full Stack para practicar las capacidades después de 1 año de práctica un tanto a la deriva.
 
 Por el momento desarrollado en:
 

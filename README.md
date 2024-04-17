@@ -1,8 +1,8 @@
-# React + Vite
+# Las Mini Tiendas de Once
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Un proyecto Full Stack para practicar las capacidades después de 1 año de práctica
 
-Currently, two official plugins are available:
+Por el momento desarrollado en:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+-   [Flask](https://flask.palletsprojects.com/) usando [flask-smorest](https://flask-smorest.readthedocs.io/en/latest/) para facilitar la documentación
+-   [React](https://react.dev) usando [Tailwind](https://tailwindcss.com/) para un maquetado rápido

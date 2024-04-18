@@ -1,12 +1,18 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { Box, Flex, Card, Avatar, Text, Table, Link, Button } from '@radix-ui/themes';
-import once from '../assets/once.jpeg';
+import { Button, Dialog } from '@radix-ui/themes';
+import Tienda from './Tienda';
+import TablaDeItems from './TablaDeItems';
 import TiendaForm from './TiendaForm';
 import ProductoForm from './ProductoForm';
+import Modal from './Modal';
 
 export default function Tiendas() {
+    const [userLoggedIn, setUserLoggedIn] = useState(false);
+    const [userId, setUserId] = useState(null);
+    const [openModal, setOpenModal] = useState(false);
     const [tiendas, setTiendas] = useState([]);
+    const [tiendaInfo, SetTiendaInfo] = useState({});
     const [items, setItems] = useState(null);
     const [crearTiendaForm, setCrearTiendaForm] = useState(null);
     const [crearProductoForm, setCrearProductoForm] = useState(null);
@@ -24,13 +30,30 @@ export default function Tiendas() {
     }, []);
 
     const handleClickTienda = async (tiendaId) => {
+        setCrearTiendaForm(null);
+        setCrearProductoForm(null);
         try {
-            const response = await axios.get(`http://127.0.0.1:5000/api/store/${tiendaId}/items`);
-            setCrearTiendaForm(null);
-            setCrearProductoForm(null);
-            setItems(response.data);
+            const response = await axios.get(`http://127.0.0.1:5000/api/store/${tiendaId}`);
+            SetTiendaInfo(response.data);
+            setItems(response.data.items);
         } catch (error) {
-            console.log('Error al obtener los items de la tienda', error);
+            console.log('Error al obtener los datos de la tienda', error);
+        }
+    };
+
+    const handleMisTiendas = () => {
+        if (userLoggedIn) {
+            axios
+                .get(`http://127.0.0.1:5000/api/store/${userId}`)
+                .then((response) => {
+                    setTiendas(response.data);
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.log('Error al procesar la solicitud GET', error);
+                });
+        } else {
+            setOpenModal(true);
         }
     };
 
@@ -47,63 +70,60 @@ export default function Tiendas() {
 
     return (
         <>
-            <Flex align="center" direction="column" gap="3">
+            <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}
+            >
                 <h1>Todas las Tiendas</h1>
-                <Flex gap="3">
-                    <Button variant="ghost" style={{ cursor: 'pointer' }} onClick={handleCrearTienda}>
+                <div>
+                    <Button
+                        variant="ghost"
+                        style={{ cursor: 'pointer', marginRight: '0.5rem' }}
+                        onClick={handleMisTiendas}
+                    >
+                        Mis Tiendas
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        style={{ cursor: 'pointer', marginRight: '0.5rem' }}
+                        onClick={handleCrearTienda}
+                    >
                         Crear Tienda
                     </Button>
                     <Button variant="ghost" style={{ cursor: 'pointer' }} onClick={handleCrearProducto}>
                         Crear Producto
                     </Button>
-                </Flex>
-            </Flex>
-            <Flex gap="3" align="start" direction="column">
+                </div>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                 {tiendas.map((tienda) => (
-                    <Link key={tienda.id} style={{ cursor: 'pointer' }}>
-                        <Box maxWidth="240px" onClick={() => handleClickTienda(tienda.id)}>
-                            <Card>
-                                <Flex gap="3" align="center">
-                                    <Avatar size="3" src={once} radius="full" fallback="T" />
-                                    <Box>
-                                        <Text as="div" size="2" weight="bold">
-                                            {tienda.name}
-                                        </Text>
-                                        <Text as="div" size="2" color="gray">
-                                            {tienda.description}
-                                        </Text>
-                                    </Box>
-                                </Flex>
-                            </Card>
-                        </Box>
-                    </Link>
+                    <Tienda key={tienda.id} tienda={tienda} handleClickTienda={handleClickTienda} />
                 ))}
-            </Flex>
+            </div>
             {items && (
-                <Flex gap="3" align="center" direction="column">
-                    <Table.Root>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.ColumnHeaderCell>Nombre</Table.ColumnHeaderCell>
-                                <Table.ColumnHeaderCell>Descripción</Table.ColumnHeaderCell>
-                                <Table.ColumnHeaderCell>Precio</Table.ColumnHeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-
-                        <Table.Body>
-                            {items.map((item) => (
-                                <Table.Row key={item.id}>
-                                    <Table.RowHeaderCell>{item.name}</Table.RowHeaderCell>
-                                    <Table.Cell>{item.description}</Table.Cell>
-                                    <Table.Cell>{item.price}</Table.Cell>
-                                </Table.Row>
-                            ))}
-                        </Table.Body>
-                    </Table.Root>
-                </Flex>
+                <div style={{ marginTop: '1rem' }}>
+                    <h2>Productos de {tiendaInfo.name}</h2>
+                    <h3>{tiendaInfo.description}</h3>
+                    <TablaDeItems items={items} />
+                </div>
             )}
-            {crearTiendaForm && <TiendaForm />}
-            {crearProductoForm && <ProductoForm />}
+            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
+                {crearTiendaForm && (
+                    <div style={{ marginBottom: '1rem' }}>
+                        <h2>Crear Tienda</h2>
+                        <TiendaForm />
+                    </div>
+                )}
+                {crearProductoForm && (
+                    <div>
+                        <h2>Crear Producto</h2>
+                        <ProductoForm />
+                    </div>
+                )}
+            </div>
+
+            <Dialog.Root open={openModal} onOpenChange={setOpenModal}>
+                <Modal setOpen={setOpenModal} />
+            </Dialog.Root>
         </>
     );
 }

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import { Flex } from '@radix-ui/themes';
 import { useState } from 'react';
 
 export default function TiendaForm() {
@@ -22,17 +21,47 @@ export default function TiendaForm() {
             });
     };
     return (
-        <Flex align="center" direction="column" gap="3">
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <label>ID de Usuario</label>
-                <input {...register('user_id', { required: true })} />
-                <label>Nombre de la Tienda</label>
-                <input {...register('name', { required: true, maxLength: 70 })} />
-                <label>Descripción</label>
-                <input {...register('description', { maxLength: 100 })} />
-                <input type="submit" />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', maxWidth: '400px' }}
+            >
+                <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
+                    <label style={{ marginBottom: '0.5rem' }}>ID de Usuario</label>
+                    <input {...register('user_id', { required: true })} style={{ padding: '0.5rem' }} />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
+                    <label style={{ marginBottom: '0.5rem' }}>Nombre de la Tienda</label>
+                    <input {...register('name', { required: true, maxLength: 70 })} style={{ padding: '0.5rem' }} />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
+                    <label style={{ marginBottom: '0.5rem' }}>Descripción</label>
+                    <input {...register('description', { maxLength: 100 })} style={{ padding: '0.5rem' }} />
+                </div>
+                <input
+                    type="submit"
+                    style={{
+                        padding: '0.5rem',
+                        backgroundColor: '#007bff',
+                        color: '#fff',
+                        border: 'none',
+                        cursor: 'pointer',
+                    }}
+                />
             </form>
-            <p>{respuesta}</p>
-        </Flex>
+            <p
+                style={{
+                    marginTop: '1rem',
+                    padding: '0.5rem',
+                    backgroundColor: '#f0f0f0',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    maxWidth: '400px',
+                    textAlign: 'center',
+                }}
+            >
+                {respuesta}
+            </p>
+        </div>
     );
 }

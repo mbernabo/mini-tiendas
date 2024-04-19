@@ -1,16 +1,17 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { Button, Dialog } from '@radix-ui/themes';
 import Tienda from './Tienda';
 import TablaDeItems from './TablaDeItems';
 import TiendaForm from './TiendaForm';
 import ProductoForm from './ProductoForm';
-import Modal from './Modal';
+import { Navbar, NavbarLoggedIn } from './Navbars';
 
 export default function Tiendas() {
     const [userLoggedIn, setUserLoggedIn] = useState(false);
-    const [userId, setUserId] = useState(null);
-    const [openModal, setOpenModal] = useState(false);
+    // const [userId, setUserId] = useState(null);
+    const [openLoginModal, setOpenLoginModal] = useState(false);
+    const [openRegisterModal, setOpenRegisterModal] = useState(false);
+
     const [tiendas, setTiendas] = useState([]);
     const [tiendaInfo, SetTiendaInfo] = useState({});
     const [items, setItems] = useState(null);
@@ -42,19 +43,19 @@ export default function Tiendas() {
     };
 
     const handleMisTiendas = () => {
-        if (userLoggedIn) {
-            axios
-                .get(`http://127.0.0.1:5000/api/store/${userId}`)
-                .then((response) => {
-                    setTiendas(response.data);
-                    console.log(response.data);
-                })
-                .catch((error) => {
-                    console.log('Error al procesar la solicitud GET', error);
-                });
-        } else {
-            setOpenModal(true);
-        }
+        // if (userLoggedIn) {
+        //     axios
+        //         .get(`http://127.0.0.1:5000/api/store/${userId}`)
+        //         .then((response) => {
+        //             setTiendas(response.data);
+        //             console.log(response.data);
+        //         })
+        //         .catch((error) => {
+        //             console.log('Error al procesar la solicitud GET', error);
+        //         });
+        // } else {
+        //     setOpenLoginModal(true);
+        // }
     };
 
     const handleCrearTienda = () => {
@@ -74,25 +75,20 @@ export default function Tiendas() {
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}
             >
                 <h1>Todas las Tiendas</h1>
-                <div>
-                    <Button
-                        variant="ghost"
-                        style={{ cursor: 'pointer', marginRight: '0.5rem' }}
-                        onClick={handleMisTiendas}
-                    >
-                        Mis Tiendas
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        style={{ cursor: 'pointer', marginRight: '0.5rem' }}
-                        onClick={handleCrearTienda}
-                    >
-                        Crear Tienda
-                    </Button>
-                    <Button variant="ghost" style={{ cursor: 'pointer' }} onClick={handleCrearProducto}>
-                        Crear Producto
-                    </Button>
-                </div>
+                {userLoggedIn ? (
+                    <NavbarLoggedIn
+                        handleMisTiendas={handleMisTiendas}
+                        handleCrearTienda={handleCrearTienda}
+                        handleCrearProducto={handleCrearProducto}
+                    />
+                ) : (
+                    <Navbar
+                        openLoginModal={openLoginModal}
+                        setOpenLoginModal={setOpenLoginModal}
+                        openRegisterModal={openRegisterModal}
+                        setOpenRegisterModal={setOpenRegisterModal}
+                    />
+                )}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                 {tiendas.map((tienda) => (
@@ -120,10 +116,6 @@ export default function Tiendas() {
                     </div>
                 )}
             </div>
-
-            <Dialog.Root open={openModal} onOpenChange={setOpenModal}>
-                <Modal setOpen={setOpenModal} />
-            </Dialog.Root>
         </>
     );
 }

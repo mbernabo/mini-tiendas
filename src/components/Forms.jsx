@@ -12,6 +12,8 @@ function LoginForm({ userLoggedIn, setUserLoggedIn }) {
             .then(function (response) {
                 console.log(response.data);
                 if (response.status === 200) {
+                    const accessToken = response.data.access_token;
+                    localStorage.setItem('accessToken', accessToken);
                     setUserLoggedIn(true);
                     setRespuesta('Usuario logueado exitosamente!');
                 } else {

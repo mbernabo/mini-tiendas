@@ -1,13 +1,14 @@
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { setHeaders } from '../../../utils';
 
 export default function TiendaForm() {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
     const onSubmit = (data) => {
         axios
-            .post('http://127.0.0.1:5000/api/store', data)
+            .post('http://127.0.0.1:5000/api/stores', data, setHeaders())
             .then(function (response) {
                 console.log(response.data);
                 if (response.status === 201) {
@@ -17,6 +18,7 @@ export default function TiendaForm() {
                 }
             })
             .catch(function (error) {
+                console.log(error.response.data);
                 setRespuesta(`Ocurrió un error en el servicio. Intente nuevamente, error: ${error}`);
             });
     };
@@ -26,10 +28,6 @@ export default function TiendaForm() {
                 onSubmit={handleSubmit(onSubmit)}
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', maxWidth: '400px' }}
             >
-                <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
-                    <label style={{ marginBottom: '0.5rem' }}>ID de Usuario</label>
-                    <input {...register('user_id', { required: true })} style={{ padding: '0.5rem' }} />
-                </div>
                 <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
                     <label style={{ marginBottom: '0.5rem' }}>Nombre de la Tienda</label>
                     <input {...register('name', { required: true, maxLength: 70 })} style={{ padding: '0.5rem' }} />

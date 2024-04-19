@@ -5,6 +5,7 @@ import TablaDeItems from './TablaDeItems';
 import TiendaForm from './TiendaForm';
 import ProductoForm from './ProductoForm';
 import { Navbar, NavbarLoggedIn } from './Navbars';
+import { setHeaders } from '../../../utils';
 
 export default function Tiendas() {
     const [userLoggedIn, setUserLoggedIn] = useState(false);
@@ -20,7 +21,7 @@ export default function Tiendas() {
 
     useEffect(() => {
         axios
-            .get('http://127.0.0.1:5000/api/store')
+            .get('http://127.0.0.1:5000/api/stores')
             .then((response) => {
                 setTiendas(response.data);
                 console.log(response.data);
@@ -43,19 +44,15 @@ export default function Tiendas() {
     };
 
     const handleMisTiendas = () => {
-        // if (userLoggedIn) {
-        //     axios
-        //         .get(`http://127.0.0.1:5000/api/store/${userId}`)
-        //         .then((response) => {
-        //             setTiendas(response.data);
-        //             console.log(response.data);
-        //         })
-        //         .catch((error) => {
-        //             console.log('Error al procesar la solicitud GET', error);
-        //         });
-        // } else {
-        //     setOpenLoginModal(true);
-        // }
+        axios
+            .get(`http://127.0.0.1:5000/api/store`, setHeaders())
+            .then((response) => {
+                setTiendas(response.data);
+                console.log(response.data);
+            })
+            .catch((error) => {
+                console.log('Error al procesar la solicitud GET', error);
+            });
     };
 
     const handleCrearTienda = () => {

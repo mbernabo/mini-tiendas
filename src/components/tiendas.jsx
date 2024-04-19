@@ -2,38 +2,33 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import Tienda from './Tienda';
 import TablaDeItems from './TablaDeItems';
-import TiendaForm from './TiendaForm';
-import ProductoForm from './ProductoForm';
 import { Navbar, NavbarLoggedIn } from './Navbars';
 import { setHeaders } from '../../../utils';
+import { obtenerTiendas } from '../../../api';
 
 export default function Tiendas() {
     const [userLoggedIn, setUserLoggedIn] = useState(false);
     // const [userId, setUserId] = useState(null);
     const [openLoginModal, setOpenLoginModal] = useState(false);
     const [openRegisterModal, setOpenRegisterModal] = useState(false);
+    const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
+    const [openCrearProductoModal, setOpenCrearProductoModal] = useState(false);
 
     const [tiendas, setTiendas] = useState([]);
     const [tiendaInfo, SetTiendaInfo] = useState({});
     const [items, setItems] = useState(null);
-    const [crearTiendaForm, setCrearTiendaForm] = useState(null);
-    const [crearProductoForm, setCrearProductoForm] = useState(null);
 
     useEffect(() => {
-        axios
-            .get('http://127.0.0.1:5000/api/stores')
-            .then((response) => {
-                setTiendas(response.data);
-                console.log(response.data);
+        obtenerTiendas() // Llama a obtenerTiendas y espera a que la promesa se resuelva
+            .then((data) => {
+                setTiendas(data); // Actualiza el estado con los datos obtenidos
             })
             .catch((error) => {
-                console.log('Error al procesar la solicitud GET', error);
+                console.log(error)
             });
     }, []);
 
     const handleClickTienda = async (tiendaId) => {
-        setCrearTiendaForm(null);
-        setCrearProductoForm(null);
         try {
             const response = await axios.get(`http://127.0.0.1:5000/api/store/${tiendaId}`);
             SetTiendaInfo(response.data);
@@ -55,17 +50,6 @@ export default function Tiendas() {
             });
     };
 
-    const handleCrearTienda = () => {
-        setItems(null);
-        setCrearTiendaForm(true);
-    };
-
-    const handleCrearProducto = () => {
-        setItems(null);
-        setCrearTiendaForm(null);
-        setCrearProductoForm(true);
-    };
-
     return (
         <>
             <div
@@ -75,8 +59,11 @@ export default function Tiendas() {
                 {userLoggedIn ? (
                     <NavbarLoggedIn
                         handleMisTiendas={handleMisTiendas}
-                        handleCrearTienda={handleCrearTienda}
-                        handleCrearProducto={handleCrearProducto}
+                        openCrearTiendaModal={openCrearTiendaModal}
+                        setOpenCrearTiendaModal={setOpenCrearTiendaModal}
+                        openCrearProductoModal={openCrearProductoModal}
+                        setopenCrearProductoModal={setOpenCrearProductoModal}
+                        setTiendas={setTiendas}
                     />
                 ) : (
                     <Navbar
@@ -101,20 +88,6 @@ export default function Tiendas() {
                     <TablaDeItems items={items} />
                 </div>
             )}
-            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
-                {crearTiendaForm && (
-                    <div style={{ marginBottom: '1rem' }}>
-                        <h2>Crear Tienda</h2>
-                        <TiendaForm />
-                    </div>
-                )}
-                {crearProductoForm && (
-                    <div>
-                        <h2>Crear Producto</h2>
-                        <ProductoForm />
-                    </div>
-                )}
-            </div>
         </>
     );
 }

@@ -1,13 +1,20 @@
 import { Dialog, Button } from '@radix-ui/themes';
-import { LoginForm, RegisterForm } from './Forms';
+import { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm } from './Forms';
 import Modal from './Modal';
 
-function Navbar({ openLoginModal, setOpenLoginModal, openRegisterModal, setOpenRegisterModal, userLoggedIn, setUserLoggedIn }) {
+function Navbar({
+    openLoginModal,
+    setOpenLoginModal,
+    openRegisterModal,
+    setOpenRegisterModal,
+    userLoggedIn,
+    setUserLoggedIn,
+}) {
     return (
         <div>
             <Dialog.Root open={openLoginModal} onOpenChange={setOpenLoginModal}>
                 <Modal setOpenModal={setOpenLoginModal} title="Log In" description="Procedé a Loguearte">
-                    <LoginForm setUserLoggedIn={setUserLoggedIn} userLoggedIn={userLoggedIn}/>
+                    <LoginForm setUserLoggedIn={setUserLoggedIn} userLoggedIn={userLoggedIn} />
                 </Modal>
             </Dialog.Root>
 
@@ -38,16 +45,46 @@ function Navbar({ openLoginModal, setOpenLoginModal, openRegisterModal, setOpenR
         </div>
     );
 }
-function NavbarLoggedIn({ handleMisTiendas, handleCrearTienda, handleCrearProducto }) {
+function NavbarLoggedIn({
+    handleMisTiendas,
+    openCrearTiendaModal,
+    setOpenCrearTiendaModal,
+    openCrearProductoModal,
+    setOpenCrearProductoModal,
+    setTiendas,
+}) {
     return (
         <div>
+            <Dialog.Root open={openCrearTiendaModal} onOpenChange={setOpenCrearTiendaModal}>
+                <Modal
+                    setOpenModal={setOpenCrearTiendaModal}
+                    title="Crear Tienda"
+                    description="Ingrese la información de la tienda que quiere crear"
+                >
+                    <CrearTiendaForm setTiendas={setTiendas} />
+                </Modal>
+            </Dialog.Root>
+
+            <Dialog.Root open={openCrearProductoModal} onOpenChange={setOpenCrearProductoModal}>
+                <Modal
+                    setOpenModal={setOpenCrearProductoModal}
+                    title="Crear Producto"
+                    description="Registrate un nuevo producto"
+                >
+                    <CrearProductoForm />
+                </Modal>
+            </Dialog.Root>
             <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }} onClick={handleMisTiendas}>
                 Mis Tiendas
             </Button>
-            <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }} onClick={handleCrearTienda}>
+            <Button
+                variant="ghost"
+                style={{ cursor: 'pointer', marginRight: '0.5rem' }}
+                onClick={() => setOpenCrearTiendaModal(true)}
+            >
                 Crear Tienda
             </Button>
-            <Button variant="ghost" style={{ cursor: 'pointer' }} onClick={handleCrearProducto}>
+            <Button variant="ghost" style={{ cursor: 'pointer' }} onClick={() => setOpenCrearProductoModal(true)}>
                 Crear Producto
             </Button>
         </div>

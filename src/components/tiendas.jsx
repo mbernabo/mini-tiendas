@@ -87,6 +87,8 @@ export default function Tiendas() {
                         setOpenLoginModal={setOpenLoginModal}
                         openRegisterModal={openRegisterModal}
                         setOpenRegisterModal={setOpenRegisterModal}
+                        userLoggedIn={userLoggedIn}
+                        setUserLoggedIn={setUserLoggedIn}
                     />
                 )}
             </div>

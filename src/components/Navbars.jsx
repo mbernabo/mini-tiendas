@@ -2,12 +2,12 @@ import { Dialog, Button } from '@radix-ui/themes';
 import { LoginForm, RegisterForm } from './Forms';
 import Modal from './Modal';
 
-function Navbar({ openLoginModal, setOpenLoginModal, openRegisterModal, setOpenRegisterModal }) {
+function Navbar({ openLoginModal, setOpenLoginModal, openRegisterModal, setOpenRegisterModal, userLoggedIn, setUserLoggedIn }) {
     return (
         <div>
             <Dialog.Root open={openLoginModal} onOpenChange={setOpenLoginModal}>
                 <Modal setOpenModal={setOpenLoginModal} title="Log In" description="Procedé a Loguearte">
-                    <LoginForm />
+                    <LoginForm setUserLoggedIn={setUserLoggedIn} userLoggedIn={userLoggedIn}/>
                 </Modal>
             </Dialog.Root>
 

@@ -1,7 +1,7 @@
 import { Dialog, Button } from '@radix-ui/themes';
 import { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm } from './Forms';
 import Modal from './Modal';
-import { obtenerTiendasUser } from '../../../api';
+import { obtenerTiendasUser, logOutUser } from '../../../api';
 
 function Navbar({
     openLoginModal,
@@ -53,6 +53,7 @@ function NavbarLoggedIn({
     setOpenCrearProductoModal,
     setTiendas,
     setMisTiendas,
+    setUserLoggedIn,
 }) {
     function handleMisTiendas() {
         obtenerTiendasUser()
@@ -65,7 +66,10 @@ function NavbarLoggedIn({
             });
     }
 
-    function handleLogOut() {}
+    function handleLogOut() {
+        logOutUser();
+        setUserLoggedIn(false);
+    }
     return (
         <div>
             <Dialog.Root open={openCrearTiendaModal} onOpenChange={setOpenCrearTiendaModal}>

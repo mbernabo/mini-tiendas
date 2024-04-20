@@ -65,6 +65,7 @@ export default function Tiendas() {
                         setOpenCrearProductoModal={setOpenCrearProductoModal}
                         setTiendas={setTiendas}
                         setMisTiendas={setMisTiendas}
+                        setUserLoggedIn={setUserLoggedIn}
                     />
                 ) : (
                     <Navbar

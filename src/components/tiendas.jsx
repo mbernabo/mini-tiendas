@@ -1,10 +1,9 @@
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import Tienda from './Tienda';
 import TablaDeItems from './TablaDeItems';
 import { Navbar, NavbarLoggedIn } from './Navbars';
-import { setHeaders } from '../../../utils';
-import { obtenerTiendas } from '../../../api';
+import { obtenerTiendas, obtenerTiendasUser, obtenerUnaTienda } from '../../../api';
+import { Badge } from '@radix-ui/themes';
 
 export default function Tiendas() {
     const [userLoggedIn, setUserLoggedIn] = useState(false);
@@ -13,57 +12,59 @@ export default function Tiendas() {
     const [openRegisterModal, setOpenRegisterModal] = useState(false);
     const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
     const [openCrearProductoModal, setOpenCrearProductoModal] = useState(false);
-
+    const [todasLasTiendas, setTodasLasTiendas] = useState([]);
+    const [misTiendas, setMisTiendas] = useState([]);
     const [tiendas, setTiendas] = useState([]);
     const [tiendaInfo, SetTiendaInfo] = useState({});
     const [items, setItems] = useState(null);
 
-    useEffect(() => {
-        obtenerTiendas() // Llama a obtenerTiendas y espera a que la promesa se resuelva
+    useEffect((userLoggedIn) => {
+        obtenerTiendas()
             .then((data) => {
-                setTiendas(data); // Actualiza el estado con los datos obtenidos
+                setTodasLasTiendas(data);
+                setTiendas(data);
             })
             .catch((error) => {
-                console.log(error)
+                console.log(error);
             });
+        if (userLoggedIn) {
+            obtenerTiendasUser()
+                .then((data) => {
+                    setMisTiendas(data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
     }, []);
 
-    const handleClickTienda = async (tiendaId) => {
-        try {
-            const response = await axios.get(`http://127.0.0.1:5000/api/store/${tiendaId}`);
-            SetTiendaInfo(response.data);
-            setItems(response.data.items);
-        } catch (error) {
-            console.log('Error al obtener los datos de la tienda', error);
-        }
-    };
-
-    const handleMisTiendas = () => {
-        axios
-            .get(`http://127.0.0.1:5000/api/store`, setHeaders())
-            .then((response) => {
-                setTiendas(response.data);
-                console.log(response.data);
+    function handleClickTienda(tiendaId) {
+        obtenerUnaTienda(tiendaId)
+            .then((data) => {
+                SetTiendaInfo(data);
+                setItems(data.items);
             })
             .catch((error) => {
-                console.log('Error al procesar la solicitud GET', error);
+                console.log(error);
             });
-    };
+    }
 
     return (
         <>
             <div
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}
             >
-                <h1>Todas las Tiendas</h1>
+                <h1 style={{ cursor: 'pointer' }} onClick={() => setTiendas(todasLasTiendas)}>
+                    Todas las Tiendas
+                </h1>
                 {userLoggedIn ? (
                     <NavbarLoggedIn
-                        handleMisTiendas={handleMisTiendas}
                         openCrearTiendaModal={openCrearTiendaModal}
                         setOpenCrearTiendaModal={setOpenCrearTiendaModal}
                         openCrearProductoModal={openCrearProductoModal}
-                        setopenCrearProductoModal={setOpenCrearProductoModal}
+                        setOpenCrearProductoModal={setOpenCrearProductoModal}
                         setTiendas={setTiendas}
+                        setMisTiendas={setMisTiendas}
                     />
                 ) : (
                     <Navbar
@@ -82,10 +83,18 @@ export default function Tiendas() {
                 ))}
             </div>
             {items && (
-                <div style={{ marginTop: '1rem' }}>
-                    <h2>Productos de {tiendaInfo.name}</h2>
+                <div style={{ marginTop: '3rem' }}>
+                    <div>
+                        <h2>Productos de {tiendaInfo.name}</h2>
+                        {misTiendas.some((tienda) => tienda.id === tiendaInfo.id) && (
+                            <>
+                                <Badge color="blue">Editar Tienda</Badge>
+                                <Badge color="orange">Borrar Tienda</Badge>
+                            </>
+                        )}
+                    </div>
                     <h3>{tiendaInfo.description}</h3>
-                    <TablaDeItems items={items} />
+                    <TablaDeItems items={items} misTiendas={misTiendas} />
                 </div>
             )}
         </>

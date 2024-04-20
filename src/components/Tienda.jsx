@@ -1,6 +1,7 @@
 import { Box, Flex, Card, Avatar, Text, Link } from '@radix-ui/themes';
 import once from '../assets/once.jpeg';
 
+
 export default function Tienda({ tienda, handleClickTienda }) {
     return (
         <Link style={{ cursor: 'pointer' }}>
@@ -15,6 +16,7 @@ export default function Tienda({ tienda, handleClickTienda }) {
                             <Text as="div" size="2" color="gray">
                                 {tienda.description}
                             </Text>
+                       
                         </Box>
                     </Flex>
                 </Card>

@@ -1,6 +1,7 @@
 import { Dialog, Button } from '@radix-ui/themes';
 import { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm } from './Forms';
 import Modal from './Modal';
+import { obtenerTiendasUser } from '../../../api';
 
 function Navbar({
     openLoginModal,
@@ -46,13 +47,25 @@ function Navbar({
     );
 }
 function NavbarLoggedIn({
-    handleMisTiendas,
     openCrearTiendaModal,
     setOpenCrearTiendaModal,
     openCrearProductoModal,
     setOpenCrearProductoModal,
     setTiendas,
+    setMisTiendas,
 }) {
+    function handleMisTiendas() {
+        obtenerTiendasUser()
+            .then((data) => {
+                setMisTiendas(data);
+                setTiendas(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    function handleLogOut() {}
     return (
         <div>
             <Dialog.Root open={openCrearTiendaModal} onOpenChange={setOpenCrearTiendaModal}>
@@ -84,8 +97,15 @@ function NavbarLoggedIn({
             >
                 Crear Tienda
             </Button>
-            <Button variant="ghost" style={{ cursor: 'pointer' }} onClick={() => setOpenCrearProductoModal(true)}>
+            <Button
+                variant="ghost"
+                style={{ cursor: 'pointer', marginRight: '0.5rem' }}
+                onClick={() => setOpenCrearProductoModal(true)}
+            >
                 Crear Producto
+            </Button>
+            <Button variant="ghost" style={{ cursor: 'pointer' }} onClick={handleLogOut}>
+                Log Out
             </Button>
         </div>
     );

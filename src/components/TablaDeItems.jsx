@@ -1,6 +1,7 @@
 import { Table } from '@radix-ui/themes';
+import { TrashIcon } from '@radix-ui/react-icons';
 
-export default function TablaDeItems({ items }) {
+export default function TablaDeItems({ items, misTiendas }) {
     return (
         <Table.Root>
             <Table.Header>
@@ -17,6 +18,11 @@ export default function TablaDeItems({ items }) {
                         <Table.RowHeaderCell>{item.name}</Table.RowHeaderCell>
                         <Table.Cell>{item.description}</Table.Cell>
                         <Table.Cell>{item.price}</Table.Cell>
+                        {misTiendas.some((tienda) => tienda.id === item.store_id) && (
+                            <Table.Cell>
+                                <TrashIcon />
+                            </Table.Cell>
+                        )}
                     </Table.Row>
                 ))}
             </Table.Body>

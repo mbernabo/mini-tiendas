@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Flex } from '@radix-ui/themes';
 import { setHeaders } from '../../../utils';
 import { obtenerTiendas } from '../../../api';
+import { obtenerTiendasUser } from '../../../api';
 
 function LoginForm({ userLoggedIn, setUserLoggedIn }) {
     const { register, handleSubmit } = useForm();
@@ -221,13 +222,28 @@ function CrearTiendaForm({ setTiendas }) {
 function CrearProductoForm() {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
+    const [tiendasUser, setTiendasUser] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await obtenerTiendasUser();
+                setTiendasUser(data);
+            } catch (error) {
+                console.error('Error al obtener las tiendas:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     const onSubmit = (data) => {
         axios
             .post('http://127.0.0.1:5000/api/item', data, setHeaders())
             .then(function (response) {
                 console.log(response.data);
                 if (response.status === 201) {
-                    setRespuesta('Tienda creada exitosamente!');
+                    setRespuesta('Producto creado exitosamente!');
                 } else {
                     setRespuesta('Bad Request');
                 }
@@ -243,6 +259,14 @@ function CrearProductoForm() {
                 onSubmit={handleSubmit(onSubmit)}
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', maxWidth: '400px' }}
             >
+                <select {...register('store_id', { required: true })}>
+                    <option value="">Seleccione una Tienda</option>
+                    {tiendasUser.map((tienda) => (
+                        <option key={tienda.id} value={tienda.id}>
+                            {tienda.name}
+                        </option>
+                    ))}
+                </select>
                 <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
                     <label style={{ marginBottom: '0.5rem' }}>Nombre del producto</label>
                     <input {...register('name', { required: true, maxLength: 70 })} style={{ padding: '0.5rem' }} />
@@ -253,7 +277,7 @@ function CrearProductoForm() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
                     <label style={{ marginBottom: '0.5rem' }}>Precio</label>
-                    <input {...register('precio', { required: true, maxLength: 100 })} style={{ padding: '0.5rem' }} />
+                    <input {...register('price', { required: true, maxLength: 100 })} style={{ padding: '0.5rem' }} />
                 </div>
                 <input
                     type="submit"

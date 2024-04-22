@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react';
 import Tienda from './Tienda';
 import TablaDeItems from './TablaDeItems';
 import { Navbar, NavbarLoggedIn } from './Navbars';
-import { obtenerTiendas, obtenerTiendasUser, obtenerUnaTienda } from '../../../api';
+import { obtenerTiendas, obtenerTiendasUser, obtenerUnaTienda } from '../../api';
 import { Badge } from '@radix-ui/themes';
+import { useCookies } from 'react-cookie';
 
 export default function Tiendas() {
     const [userLoggedIn, setUserLoggedIn] = useState(false);
+    const [cookies, setCookie, removeCookie] = useCookies(['access_token']);
+
     // const [userId, setUserId] = useState(null);
     const [openLoginModal, setOpenLoginModal] = useState(false);
     const [openRegisterModal, setOpenRegisterModal] = useState(false);
@@ -66,6 +69,8 @@ export default function Tiendas() {
                         setTiendas={setTiendas}
                         setMisTiendas={setMisTiendas}
                         setUserLoggedIn={setUserLoggedIn}
+                        accessToken={cookies.access_token}
+                        removeCookie={removeCookie}
                     />
                 ) : (
                     <Navbar
@@ -75,6 +80,7 @@ export default function Tiendas() {
                         setOpenRegisterModal={setOpenRegisterModal}
                         userLoggedIn={userLoggedIn}
                         setUserLoggedIn={setUserLoggedIn}
+                        setCookie={setCookie}
                     />
                 )}
             </div>

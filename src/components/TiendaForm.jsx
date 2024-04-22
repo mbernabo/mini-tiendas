@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { setHeaders } from '../../../utils';
+import { setHeaders } from '../../utils';
 
 export default function TiendaForm() {
     const { register, handleSubmit } = useForm();

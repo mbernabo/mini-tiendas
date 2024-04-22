@@ -1,32 +1,45 @@
-import axios from 'axios';
+// import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Flex } from '@radix-ui/themes';
-import { setHeaders } from '../../../utils';
-import { obtenerTiendas } from '../../../api';
-import { obtenerTiendasUser } from '../../../api';
+import { obtenerTiendas } from '../../api';
+import { obtenerTiendasUser } from '../../api';
+import authFetch from '../../authFetch';
+import axios from 'axios';
+
+const BASE_URL = 'http://127.0.0.1:5000';
+// const BASE_URL = 'https://mini-tiendas-api-qq9a.onrender.com';
 
 function LoginForm({ userLoggedIn, setUserLoggedIn }) {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
-    const onSubmit = (data) => {
-        axios
-            .post('http://127.0.0.1:5000/api/login', data)
-            .then(function (response) {
-                console.log(response.data);
+
+    const onSubmit = async (data) => {
+        const url = `${BASE_URL}/api/login`;
+        const options = {
+            method: 'POST',
+            data: data,
+            withCredentials: true,
+        };
+
+        // Realizar la solicitud utilizando Axios
+        axios(url, options)
+            .then((response) => {
+                // Verificar si la solicitud fue exitosa
                 if (response.status === 200) {
-                    const accessToken = response.data.access_token;
-                    const refreshToken = response.data.refresh_token
-                    localStorage.setItem('accessToken', accessToken);
-                    localStorage.setItem('refreshToken', refreshToken);
+                    console.log(response.headers);
+                    // Si response es 200 el access es válido y las cookies quedan en document.cookies!
+                    console.log('Cookies recibidas:', response.headers['set-cookie']);
+                    setRespuesta('Login Exitoso!');
                     setUserLoggedIn(true);
-                    setRespuesta('Usuario logueado exitosamente!');
+
+                    // Aquí puedes procesar las cookies según sea necesario
                 } else {
-                    setRespuesta('Bad Request');
+                    console.error('Error en la solicitud:', response.statusText);
                 }
             })
-            .catch(function (error) {
-                setRespuesta(`Ocurrió un error en el servicio. Intente nuevamente, error: ${error}`);
+            .catch((error) => {
+                console.error('Error de red:', error);
             });
     };
     return (
@@ -88,20 +101,26 @@ function LoginForm({ userLoggedIn, setUserLoggedIn }) {
 function RegisterForm() {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
-    const onSubmit = (data) => {
-        axios
-            .post('http://127.0.0.1:5000/api/user', data)
-            .then(function (response) {
-                console.log(response.data);
-                if (response.status === 201) {
-                    setRespuesta('Usuario registrado exitosamente!');
-                } else {
-                    setRespuesta('Bad Request');
-                }
-            })
-            .catch(function (error) {
-                setRespuesta(`Ocurrió un error en el servicio. Intente nuevamente, error: ${error}`);
-            });
+    const onSubmit = async (data) => {
+        const url = `${BASE_URL}/api/user`;
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        };
+        const response = await fetch(url, options);
+        try {
+            if (response.status === 201) {
+                setRespuesta('Usuario registrado exitosamente!');
+            } else {
+                setRespuesta('Bad Request');
+            }
+        } catch (error) {
+            setRespuesta(`Ocurrió un error en el servicio. Intente nuevamente, error: ${error}`);
+        }
     };
     return (
         <>
@@ -154,31 +173,36 @@ function RegisterForm() {
     );
 }
 
-function CrearTiendaForm({ setTiendas }) {
+function CrearTiendaForm({ setTiendas, accessToken }) {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
-    const onSubmit = (data) => {
-        axios
-            .post('http://127.0.0.1:5000/api/stores', data, setHeaders())
-            .then(function (response) {
-                console.log(response.data);
-                if (response.status === 201) {
-                    setRespuesta('Tienda creada exitosamente!');
-                    obtenerTiendas() // Llama a obtenerTiendas y espera a que la promesa se resuelva
-                        .then((data) => {
-                            setTiendas(data); // Actualiza el estado con los datos obtenidos
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                        });
-                } else {
-                    setRespuesta('Bad Request');
+    const onSubmit = async (data) => {
+        const url = `${BASE_URL}/api/stores`;
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        };
+        try {
+            const response = await authFetch(url, options, accessToken);
+            if (response.status === 201) {
+                setRespuesta('Tienda creada exitosamente!');
+                try {
+                    const tiendas = obtenerTiendas();
+                    setTiendas(tiendas);
+                } catch (error) {
+                    console.log(error);
                 }
-            })
-            .catch(function (error) {
-                console.log(error.response.data);
-                setRespuesta(`Ocurrió un error en el servicio. Intente nuevamente, error: ${error}`);
-            });
+            } else {
+                setRespuesta('Bad Request');
+            }
+        } catch (error) {
+            console.log(error);
+            setRespuesta(`Ocurrió un error en el servicio. Intente nuevamente, error: ${error}`);
+        }
     };
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -221,7 +245,7 @@ function CrearTiendaForm({ setTiendas }) {
         </div>
     );
 }
-function CrearProductoForm() {
+function CrearProductoForm(accessToken) {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
     const [tiendasUser, setTiendasUser] = useState([]);
@@ -239,21 +263,27 @@ function CrearProductoForm() {
         fetchData();
     }, []);
 
-    const onSubmit = (data) => {
-        axios
-            .post('http://127.0.0.1:5000/api/item', data, setHeaders())
-            .then(function (response) {
-                console.log(response.data);
-                if (response.status === 201) {
-                    setRespuesta('Producto creado exitosamente!');
-                } else {
-                    setRespuesta('Bad Request');
-                }
-            })
-            .catch(function (error) {
-                console.log(error.response.data);
-                setRespuesta(`Ocurrió un error en el servicio. Intente nuevamente, error: ${error}`);
-            });
+    const onSubmit = async (data) => {
+        const url = `${BASE_URL}/api/item`;
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        };
+        try {
+            const response = await authFetch(url, options, accessToken);
+            if (response.status === 201) {
+                setRespuesta('Producto creado exitosamente!');
+            } else {
+                setRespuesta('Bad Request');
+            }
+        } catch (error) {
+            console.log(error.response.data);
+            setRespuesta(`Ocurrió un error en el servicio. Intente nuevamente, error: ${error}`);
+        }
     };
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

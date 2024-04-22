@@ -1,7 +1,7 @@
 import { Dialog, Button } from '@radix-ui/themes';
 import { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm } from './Forms';
 import Modal from './Modal';
-import { obtenerTiendasUser, logOutUser } from '../../../api';
+import { obtenerTiendasUser, logOutUser } from '../../api';
 
 function Navbar({
     openLoginModal,
@@ -10,12 +10,13 @@ function Navbar({
     setOpenRegisterModal,
     userLoggedIn,
     setUserLoggedIn,
+    setCookie,
 }) {
     return (
         <div>
             <Dialog.Root open={openLoginModal} onOpenChange={setOpenLoginModal}>
                 <Modal setOpenModal={setOpenLoginModal} title="Log In" description="Procedé a Loguearte">
-                    <LoginForm setUserLoggedIn={setUserLoggedIn} userLoggedIn={userLoggedIn} />
+                    <LoginForm setUserLoggedIn={setUserLoggedIn} userLoggedIn={userLoggedIn} setCookie={setCookie} />
                 </Modal>
             </Dialog.Root>
 
@@ -54,21 +55,24 @@ function NavbarLoggedIn({
     setTiendas,
     setMisTiendas,
     setUserLoggedIn,
+    accessToken,
+    removeCookie
 }) {
     function handleMisTiendas() {
-        obtenerTiendasUser()
-            .then((data) => {
-                setMisTiendas(data);
-                setTiendas(data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        const tiendasUser = obtenerTiendasUser();
+
+        setMisTiendas(tiendasUser);
+        setTiendas(tiendasUser);
     }
 
     function handleLogOut() {
-        logOutUser();
-        setUserLoggedIn(false);
+        try {
+            logOutUser();
+            removeCookie('access_token');
+            setUserLoggedIn(false);
+        } catch (error) {
+            console.log('Error al desloguear', error);
+        }
     }
     return (
         <div>
@@ -78,7 +82,7 @@ function NavbarLoggedIn({
                     title="Crear Tienda"
                     description="Ingrese la información de la tienda que quiere crear"
                 >
-                    <CrearTiendaForm setTiendas={setTiendas} />
+                    <CrearTiendaForm setTiendas={setTiendas} accessToken={accessToken} />
                 </Modal>
             </Dialog.Root>
 
@@ -88,7 +92,7 @@ function NavbarLoggedIn({
                     title="Crear Producto"
                     description="Registrate un nuevo producto"
                 >
-                    <CrearProductoForm />
+                    <CrearProductoForm accessToken={accessToken} />
                 </Modal>
             </Dialog.Root>
             <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }} onClick={handleMisTiendas}>

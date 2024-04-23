@@ -91,15 +91,7 @@ export default function Tiendas() {
             </div>
             {items && (
                 <div style={{ marginTop: '3rem' }}>
-                    <div>
-                        <h2>Productos de {tiendaInfo.name}</h2>
-                        {misTiendas.some((tienda) => tienda.id === tiendaInfo.id) && (
-                            <>
-                                <Badge color="blue">Editar Tienda</Badge>
-                                <Badge color="orange">Borrar Tienda</Badge>
-                            </>
-                        )}
-                    </div>
+                   <TiendaInfo / >
                     <h3>{tiendaInfo.description}</h3>
                     <TablaDeItems items={items} misTiendas={misTiendas} />
                 </div>

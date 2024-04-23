@@ -9,6 +9,7 @@ export default function TablaDeItems({ items, misTiendas }) {
                     <Table.ColumnHeaderCell>Nombre</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell>Descripción</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell>Precio</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>Borrar</Table.ColumnHeaderCell>
                 </Table.Row>
             </Table.Header>
 

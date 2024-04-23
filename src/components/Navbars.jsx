@@ -55,12 +55,10 @@ function NavbarLoggedIn({
     setTiendas,
     setMisTiendas,
     setUserLoggedIn,
-    accessToken,
-    removeCookie
 }) {
-    function handleMisTiendas() {
-        const tiendasUser = obtenerTiendasUser();
-
+    async function handleMisTiendas() {
+        const tiendasUser = await obtenerTiendasUser();
+        console.log(tiendasUser);
         setMisTiendas(tiendasUser);
         setTiendas(tiendasUser);
     }
@@ -68,7 +66,6 @@ function NavbarLoggedIn({
     function handleLogOut() {
         try {
             logOutUser();
-            removeCookie('access_token');
             setUserLoggedIn(false);
         } catch (error) {
             console.log('Error al desloguear', error);
@@ -82,7 +79,7 @@ function NavbarLoggedIn({
                     title="Crear Tienda"
                     description="Ingrese la información de la tienda que quiere crear"
                 >
-                    <CrearTiendaForm setTiendas={setTiendas} accessToken={accessToken} />
+                    <CrearTiendaForm setTiendas={setTiendas} />
                 </Modal>
             </Dialog.Root>
 
@@ -92,7 +89,7 @@ function NavbarLoggedIn({
                     title="Crear Producto"
                     description="Registrate un nuevo producto"
                 >
-                    <CrearProductoForm accessToken={accessToken} />
+                    <CrearProductoForm />
                 </Modal>
             </Dialog.Root>
             <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }} onClick={handleMisTiendas}>

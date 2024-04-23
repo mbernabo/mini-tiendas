@@ -4,8 +4,9 @@ import { useForm } from 'react-hook-form';
 import { Flex } from '@radix-ui/themes';
 import { obtenerTiendas } from '../../api';
 import { obtenerTiendasUser } from '../../api';
-import authFetch from '../../authFetch';
+// import authFetch from '../../authFetch';
 import axios from 'axios';
+import instance from '../../authAxios';
 
 const BASE_URL = 'http://127.0.0.1:5000';
 // const BASE_URL = 'https://mini-tiendas-api-qq9a.onrender.com';
@@ -19,22 +20,22 @@ function LoginForm({ userLoggedIn, setUserLoggedIn }) {
         const options = {
             method: 'POST',
             data: data,
-            withCredentials: true,
+            // withCredentials: true,
         };
 
-        // Realizar la solicitud utilizando Axios
         axios(url, options)
             .then((response) => {
                 // Verificar si la solicitud fue exitosa
                 if (response.status === 200) {
-                    console.log(response.headers);
-                    // Si response es 200 el access es válido y las cookies quedan en document.cookies!
-                    console.log('Cookies recibidas:', response.headers['set-cookie']);
+                    // Guardar tokens en localStorage
+                    localStorage.setItem('access_token', response.data.access_token);
+                    localStorage.setItem('refresh_token', response.data.refresh_token);
+
+                    // Actualizar estado de la aplicación
                     setRespuesta('Login Exitoso!');
                     setUserLoggedIn(true);
-
-                    // Aquí puedes procesar las cookies según sea necesario
                 } else {
+                    // Mostrar mensaje de error si la solicitud no fue exitosa
                     console.error('Error en la solicitud:', response.statusText);
                 }
             })
@@ -173,29 +174,21 @@ function RegisterForm() {
     );
 }
 
-function CrearTiendaForm({ setTiendas, accessToken }) {
+function CrearTiendaForm({ setTiendas }) {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
     const onSubmit = async (data) => {
-        const url = `${BASE_URL}/api/stores`;
-
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        };
         try {
-            const response = await authFetch(url, options, accessToken);
+            const response = await instance.post('/api/stores', data);
             if (response.status === 201) {
                 setRespuesta('Tienda creada exitosamente!');
-                try {
-                    const tiendas = obtenerTiendas();
-                    setTiendas(tiendas);
-                } catch (error) {
-                    console.log(error);
-                }
+                obtenerTiendas()
+                    .then((data) => {
+                        setTiendas(data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             } else {
                 setRespuesta('Bad Request');
             }
@@ -264,17 +257,17 @@ function CrearProductoForm(accessToken) {
     }, []);
 
     const onSubmit = async (data) => {
-        const url = `${BASE_URL}/api/item`;
+        // const url = `${BASE_URL}/api/item`;
 
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        };
+        // const options = {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(data),
+        // };
         try {
-            const response = await authFetch(url, options, accessToken);
+            const response = await instance.post('/api/item', data);
             if (response.status === 201) {
                 setRespuesta('Producto creado exitosamente!');
             } else {

@@ -3,8 +3,8 @@ import Tienda from './Tienda';
 import TablaDeItems from './TablaDeItems';
 import { Navbar, NavbarLoggedIn } from './Navbars';
 import { obtenerTiendas, obtenerTiendasUser, obtenerUnaTienda } from '../../api';
-import { Badge } from '@radix-ui/themes';
 import { useCookies } from 'react-cookie';
+import TiendaInfo from './TiendaInfo';
 
 export default function Tiendas() {
     const [userLoggedIn, setUserLoggedIn] = useState(false);
@@ -91,7 +91,13 @@ export default function Tiendas() {
             </div>
             {items && (
                 <div style={{ marginTop: '3rem' }}>
-                   <TiendaInfo / >
+                    <TiendaInfo
+                        tiendaInfo={tiendaInfo}
+                        misTiendas={misTiendas}
+                        setMisTiendas={setMisTiendas}
+                        setTiendas={setTiendas}
+                        setItems={setItems}
+                    />
                     <h3>{tiendaInfo.description}</h3>
                     <TablaDeItems items={items} misTiendas={misTiendas} />
                 </div>

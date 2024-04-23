@@ -238,7 +238,7 @@ function CrearTiendaForm({ setTiendas }) {
         </div>
     );
 }
-function CrearProductoForm(accessToken) {
+function CrearProductoForm() {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
     const [tiendasUser, setTiendasUser] = useState([]);

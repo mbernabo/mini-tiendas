@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react';
 import Tienda from './Tienda';
 import TablaDeItems from './TablaDeItems';
 import { Navbar, NavbarLoggedIn } from './Navbars';
-import { obtenerTiendas, obtenerTiendasUser, obtenerUnaTienda } from '../../api';
-import { useCookies } from 'react-cookie';
+import { getFetch, obtenerTiendasUser, obtenerUnaTienda } from '../../api';
 import TiendaInfo from './TiendaInfo';
+import Auditoria from './Auditoria';
 
 export default function Tiendas() {
     const [userLoggedIn, setUserLoggedIn] = useState(false);
-    const [cookies, setCookie, removeCookie] = useCookies(['access_token']);
 
     // const [userId, setUserId] = useState(null);
     const [openLoginModal, setOpenLoginModal] = useState(false);
@@ -18,14 +17,27 @@ export default function Tiendas() {
     const [todasLasTiendas, setTodasLasTiendas] = useState([]);
     const [misTiendas, setMisTiendas] = useState([]);
     const [tiendas, setTiendas] = useState([]);
-    const [tiendaInfo, SetTiendaInfo] = useState({});
-    const [items, setItems] = useState(null);
+    const [tiendaInfo, setTiendaInfo] = useState({});
+    const [items, setItems] = useState([]);
+    const [auditData, setAuditData] = useState({});
 
     useEffect((userLoggedIn) => {
-        obtenerTiendas()
+        getFetch('stores')
             .then((data) => {
                 setTodasLasTiendas(data);
                 setTiendas(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        getFetch('auditoria')
+            .then((data) => {
+                // setAuditData(data);
+                data.map((item) => {
+                    const json = item.valores_nuevos;
+                    const nuevo = JSON.parse(json);
+                    console.log(nuevo);
+                });
             })
             .catch((error) => {
                 console.log(error);
@@ -44,7 +56,7 @@ export default function Tiendas() {
     function handleClickTienda(tiendaId) {
         obtenerUnaTienda(tiendaId)
             .then((data) => {
-                SetTiendaInfo(data);
+                setTiendaInfo(data);
                 setItems(data.items);
             })
             .catch((error) => {
@@ -69,8 +81,7 @@ export default function Tiendas() {
                         setTiendas={setTiendas}
                         setMisTiendas={setMisTiendas}
                         setUserLoggedIn={setUserLoggedIn}
-                        accessToken={cookies.access_token}
-                        removeCookie={removeCookie}
+                        setItems={setItems}
                     />
                 ) : (
                     <Navbar
@@ -80,7 +91,6 @@ export default function Tiendas() {
                         setOpenRegisterModal={setOpenRegisterModal}
                         userLoggedIn={userLoggedIn}
                         setUserLoggedIn={setUserLoggedIn}
-                        setCookie={setCookie}
                     />
                 )}
             </div>
@@ -99,9 +109,10 @@ export default function Tiendas() {
                         setItems={setItems}
                     />
                     <h3>{tiendaInfo.description}</h3>
-                    <TablaDeItems items={items} misTiendas={misTiendas} />
+                    <TablaDeItems items={items} setItems={setItems} misTiendas={misTiendas} />
                 </div>
             )}
+            {/* <Auditoria data={auditData} /> */}
         </>
     );
 }

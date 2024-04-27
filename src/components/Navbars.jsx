@@ -55,6 +55,8 @@ function NavbarLoggedIn({
     setTiendas,
     setMisTiendas,
     setUserLoggedIn,
+    items,
+    setItems,
 }) {
     async function handleMisTiendas() {
         const tiendasUser = await obtenerTiendasUser();
@@ -89,7 +91,7 @@ function NavbarLoggedIn({
                     title="Crear Producto"
                     description="Registrate un nuevo producto"
                 >
-                    <CrearProductoForm />
+                    <CrearProductoForm items={items} setItems={setItems} />
                 </Modal>
             </Dialog.Root>
             <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }} onClick={handleMisTiendas}>

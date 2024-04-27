@@ -2,8 +2,8 @@ import instance from './authAxios';
 // const BASE_URL = 'https://mini-tiendas-api-qq9a.onrender.com';
 const BASE_URL = 'http://127.0.0.1:5000';
 
-async function obtenerTiendas() {
-    const url = `${BASE_URL}/api/stores`;
+async function getFetch(endpoint) {
+    const url = `${BASE_URL}/api/${endpoint}`;
     const options = {
         method: 'GET',
         headers: {
@@ -22,15 +22,6 @@ async function obtenerTiendas() {
 }
 
 async function obtenerTiendasUser() {
-    // const url = `${BASE_URL}/api/store`;
-
-    // const options = {
-    //     method: 'GET',
-    //     credentials: 'include',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    // };
     try {
         const response = await instance.get('/api/store');
         const data = await response.data;
@@ -70,4 +61,4 @@ async function logOutUser() {
         throw error;
     }
 }
-export { obtenerTiendas, obtenerTiendasUser, obtenerUnaTienda, logOutUser };
+export { getFetch, obtenerTiendasUser, obtenerUnaTienda, logOutUser };

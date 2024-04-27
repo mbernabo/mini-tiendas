@@ -1,7 +1,18 @@
 import { Table } from '@radix-ui/themes';
 import { TrashIcon } from '@radix-ui/react-icons';
+import instance from '../../authAxios';
 
-export default function TablaDeItems({ items, misTiendas }) {
+export default function TablaDeItems({ items, setItems, misTiendas }) {
+    async function handleDeleteItem(itemId) {
+        try {
+            await instance.delete(`/api/item/${itemId}`);
+            console.log('Item borrado exitosamente');
+            const nuevosItems = items.filter((item) => item.id !== itemId);
+            setItems(nuevosItems);
+        } catch (error) {
+            console.log('error');
+        }
+    }
     return (
         <Table.Root>
             <Table.Header>
@@ -21,7 +32,7 @@ export default function TablaDeItems({ items, misTiendas }) {
                         <Table.Cell>{item.price}</Table.Cell>
                         {misTiendas.some((tienda) => tienda.id === item.store_id) && (
                             <Table.Cell>
-                                <TrashIcon />
+                                <TrashIcon style={{ cursor: 'pointer' }} onClick={() => handleDeleteItem(item.id)} />
                             </Table.Cell>
                         )}
                     </Table.Row>

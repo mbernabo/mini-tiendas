@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Flex } from '@radix-ui/themes';
-import { obtenerTiendas } from '../../api';
+import { getFetch } from '../../api';
 import { obtenerTiendasUser } from '../../api';
 // import authFetch from '../../authFetch';
 import axios from 'axios';
@@ -182,7 +182,7 @@ function CrearTiendaForm({ setTiendas }) {
             const response = await instance.post('/api/stores', data);
             if (response.status === 201) {
                 setRespuesta('Tienda creada exitosamente!');
-                obtenerTiendas()
+                getFetch('stores')
                     .then((data) => {
                         setTiendas(data);
                     })
@@ -238,7 +238,7 @@ function CrearTiendaForm({ setTiendas }) {
         </div>
     );
 }
-function CrearProductoForm() {
+function CrearProductoForm({ setItems }) {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
     const [tiendasUser, setTiendasUser] = useState([]);
@@ -257,24 +257,16 @@ function CrearProductoForm() {
     }, []);
 
     const onSubmit = async (data) => {
-        // const url = `${BASE_URL}/api/item`;
-
-        // const options = {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(data),
-        // };
         try {
             const response = await instance.post('/api/item', data);
             if (response.status === 201) {
+                const newItem = response.data;
                 setRespuesta('Producto creado exitosamente!');
+                setItems((prevItems) => [...prevItems, newItem]);
             } else {
                 setRespuesta('Bad Request');
             }
         } catch (error) {
-            console.log(error.response.data);
             setRespuesta(`Ocurrió un error en el servicio. Intente nuevamente, error: ${error}`);
         }
     };

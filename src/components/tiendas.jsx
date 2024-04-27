@@ -19,9 +19,9 @@ export default function Tiendas() {
     const [tiendas, setTiendas] = useState([]);
     const [tiendaInfo, setTiendaInfo] = useState({});
     const [items, setItems] = useState([]);
-    const [auditData, setAuditData] = useState({});
+    const [auditData, setAuditData] = useState(null);
 
-    useEffect((userLoggedIn) => {
+    useEffect(() => {
         getFetch('stores')
             .then((data) => {
                 setTodasLasTiendas(data);
@@ -32,25 +32,17 @@ export default function Tiendas() {
             });
         getFetch('auditoria')
             .then((data) => {
-                // setAuditData(data);
+                console.log(data, 'auditoriaData');
                 data.map((item) => {
                     const json = item.valores_nuevos;
                     const nuevo = JSON.parse(json);
                     console.log(nuevo);
                 });
+                setAuditData(data);
             })
             .catch((error) => {
                 console.log(error);
             });
-        if (userLoggedIn) {
-            obtenerTiendasUser()
-                .then((data) => {
-                    setMisTiendas(data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        }
     }, []);
 
     function handleClickTienda(tiendaId) {
@@ -112,7 +104,7 @@ export default function Tiendas() {
                     <TablaDeItems items={items} setItems={setItems} misTiendas={misTiendas} />
                 </div>
             )}
-            {/* <Auditoria data={auditData} /> */}
+            <div>{auditData ? <Auditoria data={auditData} /> : <p>Cargando...</p>}</div>
         </>
     );
 }

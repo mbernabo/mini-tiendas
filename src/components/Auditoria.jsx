@@ -10,12 +10,14 @@ export default function Auditoria() {
     const data = location.state ? location.state.auditData : null;
     const [open, setOpen] = useState(false);
     const [valoresPista, setValoresPista] = useState(null);
+    const [item, setItem] = useState({});
 
-    function handleMostrarPista(valoresOriginales, valoresNuevos) {
-        const valoresOriginalesParseados = valoresOriginales ? JSON.parse(valoresOriginales) : valoresOriginales;
-        const valoresNuevosParseados = valoresNuevos ? JSON.parse(valoresNuevos) : valoresNuevos;
-        
+    function handleMostrarPista(item) {
+        const valoresOriginalesParseados = item.valores_originales ? JSON.parse(item.valores_originales) : null;
+        const valoresNuevosParseados = item.valores_nuevos ? JSON.parse(item.valores_nuevos) : null;
+
         setValoresPista({ valoresOriginalesParseados, valoresNuevosParseados });
+        setItem(item);
         setOpen(true);
     }
     return (
@@ -46,7 +48,7 @@ export default function Auditoria() {
                             <Table.Cell>{item.fecha}</Table.Cell>
                             <Table.Cell>{item.comentarios}</Table.Cell>
                             <Table.Cell
-                                onClick={() => handleMostrarPista(item.valores_originales, item.valores_nuevos)}
+                                onClick={() => handleMostrarPista(item)}
                                 style={{ cursor: 'pointer', marginRight: '0.5rem' }}
                             >
                                 Mostrar
@@ -59,10 +61,10 @@ export default function Auditoria() {
             <Dialog.Root open={open} onOpenChange={setOpen}>
                 <Modal
                     setOpenModal={setOpen}
-                    title="Valores de la pista de Auditoría"
-                    description="Valores nuevos y anteriores"
+                    title={`Tabla: ${item.tabla_origen} Operación: ${item.operacion}`}
+                    description={`Registro: ${item.registro_id} Versión: ${item.version}`}
                 >
-                    <ValoresPistaAuditoria valoresPista={valoresPista} />
+                    <ValoresPistaAuditoria valoresPista={valoresPista} item={item} />
                 </Modal>
             </Dialog.Root>
         </>

@@ -1,4 +1,4 @@
-import { Table, Button, Heading, Text } from '@radix-ui/themes';
+import { Table, Text } from '@radix-ui/themes';
 
 export default function ValoresPistaAuditoria({ valoresPista }) {
     return (

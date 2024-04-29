@@ -51,7 +51,9 @@ export default function Auditoria({ data }) {
             </Table.Root>
             {mostrarPista && (
                 <>
-                    {valoresPista.valoresOriginalesParseados && (
+                    <h2>Pista de Auditoría</h2>
+                    <h3>Valores originales</h3>
+                    {valoresPista.valoresOriginalesParseados ? (
                         <Table.Root>
                             <Table.Header>
                                 <Table.Row>
@@ -68,9 +70,12 @@ export default function Auditoria({ data }) {
                                 </Table.Row>
                             </Table.Body>
                         </Table.Root>
+                    ) : (
+                        <p>No existen valores</p>
                     )}
+                    <h3>Valores nuevos</h3>
 
-                    {valoresPista.valoresNuevosParseados && (
+                    {valoresPista.valoresNuevosParseados ? (
                         <Table.Root>
                             <Table.Header>
                                 <Table.Row>
@@ -87,6 +92,8 @@ export default function Auditoria({ data }) {
                                 </Table.Row>
                             </Table.Body>
                         </Table.Root>
+                    ) : (
+                        <p>No existen valores</p>
                     )}
                 </>
             )}

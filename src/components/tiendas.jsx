@@ -25,11 +25,14 @@ export default function Tiendas() {
         getFetch('stores')
             .then((data) => {
                 setTodasLasTiendas(data);
-                setTiendas(data);
+                setTiendas((prevState) => [...prevState, ...data]);
             })
             .catch((error) => {
                 console.log(error);
             });
+    }, []);
+
+    useEffect(() => {
         getFetch('auditoria')
             .then((data) => {
                 console.log(data, 'auditoriaData');
@@ -43,7 +46,7 @@ export default function Tiendas() {
             .catch((error) => {
                 console.log(error);
             });
-    }, []);
+    }, [tiendas, items]);
 
     function handleClickTienda(tiendaId) {
         obtenerUnaTienda(tiendaId)

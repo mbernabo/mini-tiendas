@@ -14,7 +14,7 @@ export default function TablaDeItems({ items, setItems, misTiendas }) {
         }
     }
     return (
-        <Table.Root>
+        <Table.Root>    
             <Table.Header>
                 <Table.Row>
                     <Table.ColumnHeaderCell>Nombre</Table.ColumnHeaderCell>

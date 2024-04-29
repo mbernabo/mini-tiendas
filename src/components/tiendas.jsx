@@ -8,8 +8,6 @@ import { useSelector } from 'react-redux';
 
 export default function Tiendas() {
     const isAuthenticated = useSelector((state) => state.user.loggedIn);
-    const [isAdmin, setIsAdmin] = useState(null);
-    // const [userId, setUserId] = useState(null);
     const [openLoginModal, setOpenLoginModal] = useState(false);
     const [openRegisterModal, setOpenRegisterModal] = useState(false);
     const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
@@ -19,7 +17,6 @@ export default function Tiendas() {
     const [tiendas, setTiendas] = useState([]);
     const [tiendaInfo, setTiendaInfo] = useState({});
     const [items, setItems] = useState([]);
-    const [auditData, setAuditData] = useState(null);
 
     useEffect(() => {
         getFetch('stores')
@@ -31,22 +28,6 @@ export default function Tiendas() {
                 console.log(error);
             });
     }, []);
-
-    useEffect(() => {
-        getFetch('auditoria')
-            .then((data) => {
-                console.log(data, 'auditoriaData');
-                data.map((item) => {
-                    const json = item.valores_nuevos;
-                    const nuevo = JSON.parse(json);
-                    console.log(nuevo);
-                });
-                setAuditData(data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, [tiendas, items]);
 
     function handleClickTienda(tiendaId) {
         obtenerUnaTienda(tiendaId)
@@ -76,8 +57,6 @@ export default function Tiendas() {
                         setTiendas={setTiendas}
                         setMisTiendas={setMisTiendas}
                         setItems={setItems}
-                        isAdmin={isAdmin}
-                        auditData={auditData}
                     />
                 ) : (
                     <Navbar
@@ -85,7 +64,6 @@ export default function Tiendas() {
                         setOpenLoginModal={setOpenLoginModal}
                         openRegisterModal={openRegisterModal}
                         setOpenRegisterModal={setOpenRegisterModal}
-                        setIsAdmin={setIsAdmin}
                     />
                 )}
             </div>

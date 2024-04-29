@@ -12,6 +12,10 @@ async function getFetch(endpoint) {
     };
     try {
         const response = await fetch(url, options);
+        if (response.status === 401) {
+            console.log('Usuario no autorizado');
+            throw new Error('Usuario no autorizado');
+        }
         const data = await response.json();
         console.log(data);
         return data;

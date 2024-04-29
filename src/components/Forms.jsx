@@ -4,16 +4,15 @@ import { useForm } from 'react-hook-form';
 import { Flex } from '@radix-ui/themes';
 import { getFetch } from '../../api';
 import { obtenerTiendasUser } from '../../api';
-import { useDispatch } from 'react-redux';
-import { login } from '../redux/userSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { login, makeAdmin } from '../redux/userSlice';
 import axios from 'axios';
 import instance from '../../authAxios';
-import { useSelector } from 'react-redux';
 
 const BASE_URL = 'http://127.0.0.1:5000';
 // const BASE_URL = 'https://mini-tiendas-api-qq9a.onrender.com';
 
-function LoginForm({ setIsAdmin }) {
+function LoginForm() {
     const isAuthenticated = useSelector((state) => state.user.loggedIn);
     const dispatch = useDispatch();
     const { register, handleSubmit } = useForm();
@@ -22,7 +21,10 @@ function LoginForm({ setIsAdmin }) {
     const setAdminStatus = async () => {
         try {
             const response = await instance.get('/api/user/check-admin');
-            setIsAdmin(response.data.is_admin);
+            console.log(response.data.is_admin);
+            if (response.data.is_admin) {
+                dispatch(makeAdmin());
+            }
         } catch (error) {
             console.log(error);
         }

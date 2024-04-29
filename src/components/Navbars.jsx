@@ -3,23 +3,15 @@ import { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm } from './F
 import Modal from './Modal';
 import { obtenerTiendasUser, logOutUser } from '../../api';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { logout } from '../redux/userSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout, removeAdmin } from '../redux/userSlice';
 
-function Navbar({
-    openLoginModal,
-    setOpenLoginModal,
-    openRegisterModal,
-    setOpenRegisterModal,
-    userLoggedIn,
-    setUserLoggedIn,
-    setIsAdmin,
-}) {
+function Navbar({ openLoginModal, setOpenLoginModal, openRegisterModal, setOpenRegisterModal }) {
     return (
         <div>
             <Dialog.Root open={openLoginModal} onOpenChange={setOpenLoginModal}>
                 <Modal setOpenModal={setOpenLoginModal} title="Log In" description="Procedé a Loguearte">
-                    <LoginForm setIsAdmin={setIsAdmin} />
+                    <LoginForm />
                 </Modal>
             </Dialog.Root>
 
@@ -59,9 +51,8 @@ function NavbarLoggedIn({
     setMisTiendas,
     items,
     setItems,
-    isAdmin,
-    auditData,
 }) {
+    const isAdmin = useSelector((state) => state.user.isAdmin);
     const dispatch = useDispatch();
     async function handleMisTiendas() {
         const tiendasUser = await obtenerTiendasUser();
@@ -74,6 +65,7 @@ function NavbarLoggedIn({
         try {
             logOutUser();
             dispatch(logout());
+            dispatch(removeAdmin());
         } catch (error) {
             console.log('Error al desloguear', error);
         }
@@ -118,15 +110,11 @@ function NavbarLoggedIn({
             </Button>
             {isAdmin && (
                 <>
-                    {auditData ? (
-                        <Link to="auditoria" state={{ auditData: auditData }}>
-                            <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }}>
-                                Auditoría
-                            </Button>
-                        </Link>
-                    ) : (
-                        <div>Cargando..</div>
-                    )}
+                    <Link to="auditoria">
+                        <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }}>
+                            Auditoría
+                        </Button>
+                    </Link>
                 </>
             )}
             <Button variant="ghost" style={{ cursor: 'pointer' }} onClick={handleLogOut}>

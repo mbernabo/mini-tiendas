@@ -4,14 +4,15 @@ import './index.css';
 import '@radix-ui/themes/styles.css';
 import { Theme } from '@radix-ui/themes';
 import { BrowserRouter } from 'react-router-dom';
-import { CookiesProvider } from 'react-cookie';
+import { Provider } from 'react-redux';
+import { store } from './redux/store.js';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
         <Theme>
-            <CookiesProvider defaultSetOptions={{ path: '/' }}>
+            <Provider store={store}>
                 <App />
-            </CookiesProvider>
+            </Provider>
         </Theme>
     </BrowserRouter>
 );

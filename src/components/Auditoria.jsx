@@ -4,6 +4,7 @@ import { Table, Button, Heading, Text } from '@radix-ui/themes';
 import * as Dialog from '@radix-ui/react-dialog';
 import Modal from './Modal';
 import ValoresPistaAuditoria from './ValoresPistaAuditoria';
+import { Link } from 'react-router-dom';
 
 export default function Auditoria() {
     const location = useLocation();
@@ -22,7 +23,16 @@ export default function Auditoria() {
     }
     return (
         <>
-            <h1>Auditoría - Mini Tiendas</h1>
+            <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}
+            >
+                <Heading>Auditoría - Mini Tiendas</Heading>
+                <Link to="/tiendas">
+                    <Button variant="ghost" style={{ cursor: 'pointer' }}>
+                        Volver
+                    </Button>
+                </Link>
+            </div>
             <Table.Root>
                 <Table.Header>
                     <Table.Row>

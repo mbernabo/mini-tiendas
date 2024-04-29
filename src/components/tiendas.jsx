@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import Tienda from './Tienda';
 import TablaDeItems from './TablaDeItems';
 import { Navbar, NavbarLoggedIn } from './Navbars';
-import { getFetch, obtenerTiendasUser, obtenerUnaTienda } from '../../api';
+import { getFetch, obtenerUnaTienda } from '../../api';
 import TiendaInfo from './TiendaInfo';
-import Auditoria from './Auditoria';
+import { useSelector } from 'react-redux';
 
 export default function Tiendas() {
-    const [userLoggedIn, setUserLoggedIn] = useState(false);
+    const isAuthenticated = useSelector((state) => state.user.loggedIn);
     const [isAdmin, setIsAdmin] = useState(null);
     // const [userId, setUserId] = useState(null);
     const [openLoginModal, setOpenLoginModal] = useState(false);
@@ -67,7 +67,7 @@ export default function Tiendas() {
                 <h1 style={{ cursor: 'pointer' }} onClick={() => setTiendas(todasLasTiendas)}>
                     Todas las Tiendas
                 </h1>
-                {userLoggedIn ? (
+                {isAuthenticated ? (
                     <NavbarLoggedIn
                         openCrearTiendaModal={openCrearTiendaModal}
                         setOpenCrearTiendaModal={setOpenCrearTiendaModal}
@@ -75,7 +75,6 @@ export default function Tiendas() {
                         setOpenCrearProductoModal={setOpenCrearProductoModal}
                         setTiendas={setTiendas}
                         setMisTiendas={setMisTiendas}
-                        setUserLoggedIn={setUserLoggedIn}
                         setItems={setItems}
                         isAdmin={isAdmin}
                         auditData={auditData}
@@ -86,8 +85,6 @@ export default function Tiendas() {
                         setOpenLoginModal={setOpenLoginModal}
                         openRegisterModal={openRegisterModal}
                         setOpenRegisterModal={setOpenRegisterModal}
-                        userLoggedIn={userLoggedIn}
-                        setUserLoggedIn={setUserLoggedIn}
                         setIsAdmin={setIsAdmin}
                     />
                 )}
@@ -110,7 +107,6 @@ export default function Tiendas() {
                     <TablaDeItems items={items} setItems={setItems} misTiendas={misTiendas} />
                 </div>
             )}
-            {/* <div>{auditData ? <Auditoria data={auditData} /> : <p>Cargando...</p>}</div> */}
         </>
     );
 }

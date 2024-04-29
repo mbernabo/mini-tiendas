@@ -4,14 +4,18 @@ import { useForm } from 'react-hook-form';
 import { Flex } from '@radix-ui/themes';
 import { getFetch } from '../../api';
 import { obtenerTiendasUser } from '../../api';
-// import authFetch from '../../authFetch';
+import { useDispatch } from 'react-redux';
+import { login } from '../redux/userSlice';
 import axios from 'axios';
 import instance from '../../authAxios';
+import { useSelector } from 'react-redux';
 
 const BASE_URL = 'http://127.0.0.1:5000';
 // const BASE_URL = 'https://mini-tiendas-api-qq9a.onrender.com';
 
-function LoginForm({ userLoggedIn, setUserLoggedIn, setIsAdmin }) {
+function LoginForm({ setIsAdmin }) {
+    const isAuthenticated = useSelector((state) => state.user.loggedIn);
+    const dispatch = useDispatch();
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
 
@@ -43,7 +47,7 @@ function LoginForm({ userLoggedIn, setUserLoggedIn, setIsAdmin }) {
 
                     // Actualizar estado de la aplicación
                     setRespuesta('Login Exitoso!');
-                    setUserLoggedIn(true);
+                    dispatch(login());
                 } else {
                     // Mostrar mensaje de error si la solicitud no fue exitosa
                     console.error('Error en la solicitud:', response.statusText);
@@ -55,7 +59,7 @@ function LoginForm({ userLoggedIn, setUserLoggedIn, setIsAdmin }) {
     };
     return (
         <>
-            {!userLoggedIn && (
+            {!isAuthenticated && (
                 <form
                     onSubmit={handleSubmit(onSubmit)}
                     style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', maxWidth: '400px' }}

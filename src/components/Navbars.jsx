@@ -3,6 +3,8 @@ import { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm } from './F
 import Modal from './Modal';
 import { obtenerTiendasUser, logOutUser } from '../../api';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/userSlice';
 
 function Navbar({
     openLoginModal,
@@ -17,7 +19,7 @@ function Navbar({
         <div>
             <Dialog.Root open={openLoginModal} onOpenChange={setOpenLoginModal}>
                 <Modal setOpenModal={setOpenLoginModal} title="Log In" description="Procedé a Loguearte">
-                    <LoginForm setUserLoggedIn={setUserLoggedIn} userLoggedIn={userLoggedIn} setIsAdmin={setIsAdmin} />
+                    <LoginForm setIsAdmin={setIsAdmin} />
                 </Modal>
             </Dialog.Root>
 
@@ -55,12 +57,12 @@ function NavbarLoggedIn({
     setOpenCrearProductoModal,
     setTiendas,
     setMisTiendas,
-    setUserLoggedIn,
     items,
     setItems,
     isAdmin,
     auditData,
 }) {
+    const dispatch = useDispatch();
     async function handleMisTiendas() {
         const tiendasUser = await obtenerTiendasUser();
         console.log(tiendasUser);
@@ -71,7 +73,7 @@ function NavbarLoggedIn({
     function handleLogOut() {
         try {
             logOutUser();
-            setUserLoggedIn(false);
+            dispatch(logout());
         } catch (error) {
             console.log('Error al desloguear', error);
         }
@@ -122,8 +124,9 @@ function NavbarLoggedIn({
                                 Auditoría
                             </Button>
                         </Link>
-                    ) : <div>Cargando..</div>
-                    }
+                    ) : (
+                        <div>Cargando..</div>
+                    )}
                 </>
             )}
             <Button variant="ghost" style={{ cursor: 'pointer' }} onClick={handleLogOut}>

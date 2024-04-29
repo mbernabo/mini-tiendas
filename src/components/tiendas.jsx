@@ -8,7 +8,7 @@ import Auditoria from './Auditoria';
 
 export default function Tiendas() {
     const [userLoggedIn, setUserLoggedIn] = useState(false);
-
+    const [isAdmin, setIsAdmin] = useState(null);
     // const [userId, setUserId] = useState(null);
     const [openLoginModal, setOpenLoginModal] = useState(false);
     const [openRegisterModal, setOpenRegisterModal] = useState(false);
@@ -77,6 +77,8 @@ export default function Tiendas() {
                         setMisTiendas={setMisTiendas}
                         setUserLoggedIn={setUserLoggedIn}
                         setItems={setItems}
+                        isAdmin={isAdmin}
+                        auditData={auditData}
                     />
                 ) : (
                     <Navbar
@@ -86,6 +88,7 @@ export default function Tiendas() {
                         setOpenRegisterModal={setOpenRegisterModal}
                         userLoggedIn={userLoggedIn}
                         setUserLoggedIn={setUserLoggedIn}
+                        setIsAdmin={setIsAdmin}
                     />
                 )}
             </div>
@@ -107,7 +110,7 @@ export default function Tiendas() {
                     <TablaDeItems items={items} setItems={setItems} misTiendas={misTiendas} />
                 </div>
             )}
-            <div>{auditData ? <Auditoria data={auditData} /> : <p>Cargando...</p>}</div>
+            {/* <div>{auditData ? <Auditoria data={auditData} /> : <p>Cargando...</p>}</div> */}
         </>
     );
 }

@@ -2,6 +2,7 @@ import { Dialog, Button } from '@radix-ui/themes';
 import { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm } from './Forms';
 import Modal from './Modal';
 import { obtenerTiendasUser, logOutUser } from '../../api';
+import { Link } from 'react-router-dom';
 
 function Navbar({
     openLoginModal,
@@ -10,13 +11,13 @@ function Navbar({
     setOpenRegisterModal,
     userLoggedIn,
     setUserLoggedIn,
-    setCookie,
+    setIsAdmin,
 }) {
     return (
         <div>
             <Dialog.Root open={openLoginModal} onOpenChange={setOpenLoginModal}>
                 <Modal setOpenModal={setOpenLoginModal} title="Log In" description="Procedé a Loguearte">
-                    <LoginForm setUserLoggedIn={setUserLoggedIn} userLoggedIn={userLoggedIn} setCookie={setCookie} />
+                    <LoginForm setUserLoggedIn={setUserLoggedIn} userLoggedIn={userLoggedIn} setIsAdmin={setIsAdmin} />
                 </Modal>
             </Dialog.Root>
 
@@ -57,6 +58,8 @@ function NavbarLoggedIn({
     setUserLoggedIn,
     items,
     setItems,
+    isAdmin,
+    auditData,
 }) {
     async function handleMisTiendas() {
         const tiendasUser = await obtenerTiendasUser();
@@ -111,6 +114,18 @@ function NavbarLoggedIn({
             >
                 Crear Producto
             </Button>
+            {isAdmin && (
+                <>
+                    {auditData ? (
+                        <Link to="auditoria" state={{ auditData: auditData }}>
+                            <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }}>
+                                Auditoría
+                            </Button>
+                        </Link>
+                    ) : <div>Cargando..</div>
+                    }
+                </>
+            )}
             <Button variant="ghost" style={{ cursor: 'pointer' }} onClick={handleLogOut}>
                 Log Out
             </Button>

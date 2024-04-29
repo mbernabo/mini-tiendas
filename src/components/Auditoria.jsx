@@ -1,6 +1,10 @@
-import { Table, Button } from '@radix-ui/themes';
 import { useState } from 'react';
-export default function Auditoria({ data }) {
+import { useLocation } from 'react-router-dom';
+import { Table, Button } from '@radix-ui/themes';
+
+export default function Auditoria() {
+    const location = useLocation();
+    const data = location.state ? location.state.auditData : null;
     const [mostrarPista, setMostrarPista] = useState(false);
     const [valoresPista, setValoresPista] = useState(null);
     function handleMostrarPista(valoresOriginales, valoresNuevos) {
@@ -15,6 +19,7 @@ export default function Auditoria({ data }) {
     }
     return (
         <>
+            <h1>Auditoría - Mini Tiendas</h1>
             <Table.Root>
                 <Table.Header>
                     <Table.Row>

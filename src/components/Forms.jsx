@@ -11,9 +11,18 @@ import instance from '../../authAxios';
 const BASE_URL = 'http://127.0.0.1:5000';
 // const BASE_URL = 'https://mini-tiendas-api-qq9a.onrender.com';
 
-function LoginForm({ userLoggedIn, setUserLoggedIn }) {
+function LoginForm({ userLoggedIn, setUserLoggedIn, setIsAdmin }) {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
+
+    const setAdminStatus = async () => {
+        try {
+            const response = await instance.get('/api/user/check-admin');
+            setIsAdmin(response.data.is_admin);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const onSubmit = async (data) => {
         const url = `${BASE_URL}/api/login`;
@@ -30,6 +39,7 @@ function LoginForm({ userLoggedIn, setUserLoggedIn }) {
                     // Guardar tokens en localStorage
                     localStorage.setItem('access_token', response.data.access_token);
                     localStorage.setItem('refresh_token', response.data.refresh_token);
+                    setAdminStatus();
 
                     // Actualizar estado de la aplicación
                     setRespuesta('Login Exitoso!');

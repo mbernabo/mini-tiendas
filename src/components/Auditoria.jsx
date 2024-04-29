@@ -1,21 +1,22 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Table, Button } from '@radix-ui/themes';
+import { Table, Button, Heading, Text } from '@radix-ui/themes';
+import * as Dialog from '@radix-ui/react-dialog';
+import Modal from './Modal';
+import ValoresPistaAuditoria from './ValoresPistaAuditoria';
 
 export default function Auditoria() {
     const location = useLocation();
     const data = location.state ? location.state.auditData : null;
-    const [mostrarPista, setMostrarPista] = useState(false);
+    const [open, setOpen] = useState(false);
     const [valoresPista, setValoresPista] = useState(null);
+
     function handleMostrarPista(valoresOriginales, valoresNuevos) {
         const valoresOriginalesParseados = valoresOriginales ? JSON.parse(valoresOriginales) : valoresOriginales;
         const valoresNuevosParseados = valoresNuevos ? JSON.parse(valoresNuevos) : valoresNuevos;
-        console.log(valoresOriginales);
-        console.log(valoresNuevosParseados);
-        console.log(valoresOriginalesParseados);
-        console.log(valoresNuevosParseados);
+        
         setValoresPista({ valoresOriginalesParseados, valoresNuevosParseados });
-        setMostrarPista(true);
+        setOpen(true);
     }
     return (
         <>
@@ -30,7 +31,7 @@ export default function Auditoria() {
                         <Table.ColumnHeaderCell>Versión</Table.ColumnHeaderCell>
                         <Table.ColumnHeaderCell>Fecha</Table.ColumnHeaderCell>
                         <Table.ColumnHeaderCell>Comentarios</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Pista de Auditoría</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell>Valores Auditados</Table.ColumnHeaderCell>
                     </Table.Row>
                 </Table.Header>
 
@@ -54,54 +55,16 @@ export default function Auditoria() {
                     ))}
                 </Table.Body>
             </Table.Root>
-            {mostrarPista && (
-                <>
-                    <h2>Pista de Auditoría</h2>
-                    <h3>Valores originales</h3>
-                    {valoresPista.valoresOriginalesParseados ? (
-                        <Table.Root>
-                            <Table.Header>
-                                <Table.Row>
-                                    {Object.keys(valoresPista.valoresOriginalesParseados).map((key, index) => (
-                                        <Table.ColumnHeaderCell key={index}>{key}</Table.ColumnHeaderCell>
-                                    ))}
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                <Table.Row>
-                                    {Object.values(valoresPista.valoresOriginalesParseados).map((value, index) => (
-                                        <Table.Cell key={index}>{value}</Table.Cell>
-                                    ))}
-                                </Table.Row>
-                            </Table.Body>
-                        </Table.Root>
-                    ) : (
-                        <p>No existen valores</p>
-                    )}
-                    <h3>Valores nuevos</h3>
 
-                    {valoresPista.valoresNuevosParseados ? (
-                        <Table.Root>
-                            <Table.Header>
-                                <Table.Row>
-                                    {Object.keys(valoresPista.valoresNuevosParseados).map((key, index) => (
-                                        <Table.ColumnHeaderCell key={index}>{key}</Table.ColumnHeaderCell>
-                                    ))}
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                <Table.Row>
-                                    {Object.values(valoresPista.valoresNuevosParseados).map((value, index) => (
-                                        <Table.Cell key={index}>{value}</Table.Cell>
-                                    ))}
-                                </Table.Row>
-                            </Table.Body>
-                        </Table.Root>
-                    ) : (
-                        <p>No existen valores</p>
-                    )}
-                </>
-            )}
+            <Dialog.Root open={open} onOpenChange={setOpen}>
+                <Modal
+                    setOpenModal={setOpen}
+                    title="Valores de la pista de Auditoría"
+                    description="Valores nuevos y anteriores"
+                >
+                    <ValoresPistaAuditoria valoresPista={valoresPista} />
+                </Modal>
+            </Dialog.Root>
         </>
     );
 }

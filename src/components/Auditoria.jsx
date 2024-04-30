@@ -11,6 +11,7 @@ export default function Auditoria() {
     // const location = useLocation();
     // const data = location.state ? location.state.auditData : null;
     const [data, setAuditData] = useState(null);
+    const [accesoHabilitado, setAccesoHabilitado] = useState(true);
     const [open, setOpen] = useState(false);
     const [valoresPista, setValoresPista] = useState(null);
     const [item, setItem] = useState({});
@@ -23,6 +24,7 @@ export default function Auditoria() {
             } catch (error) {
                 console.log(error);
                 if (error.response.status === 401) {
+                    setAccesoHabilitado(false);
                     console.log('No está autorizado a ingresar a esta ruta!');
                 }
             }
@@ -102,8 +104,10 @@ export default function Auditoria() {
                         </Modal>
                     </Dialog.Root>
                 </>
-            ) : (
+            ) : accesoHabilitado ? (
                 <p>Cargando..</p>
+            ) : (
+                <Heading>Acceso Restringido</Heading>
             )}
         </>
     );

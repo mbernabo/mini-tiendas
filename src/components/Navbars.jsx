@@ -66,6 +66,8 @@ function NavbarLoggedIn({
             logOutUser();
             dispatch(logout());
             dispatch(removeAdmin());
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
         } catch (error) {
             console.log('Error al desloguear', error);
         }

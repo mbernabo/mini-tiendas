@@ -14,7 +14,7 @@ export default function TablaDeItems({ items, setItems, misTiendas }) {
         }
     }
     return (
-        <Table.Root>    
+        <Table.Root>
             <Table.Header>
                 <Table.Row>
                     <Table.ColumnHeaderCell>Nombre</Table.ColumnHeaderCell>
@@ -30,7 +30,7 @@ export default function TablaDeItems({ items, setItems, misTiendas }) {
                         <Table.RowHeaderCell>{item.name}</Table.RowHeaderCell>
                         <Table.Cell>{item.description}</Table.Cell>
                         <Table.Cell>{item.price}</Table.Cell>
-                        {misTiendas.some((tienda) => tienda.id === item.store_id) && (
+                        {misTiendas && misTiendas.some((tienda) => tienda.id === item.store_id) && (
                             <Table.Cell>
                                 <TrashIcon style={{ cursor: 'pointer' }} onClick={() => handleDeleteItem(item.id)} />
                             </Table.Cell>

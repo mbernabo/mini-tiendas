@@ -16,12 +16,11 @@ export default function TiendaInfo({ tiendaInfo, misTiendas, setMisTiendas, setT
         setItems(null);
     }
 
-
     return (
         <>
             <div>
                 <h2>Productos de {tiendaInfo.name}</h2>
-                {misTiendas.some((tienda) => tienda.id === tiendaInfo.id) && (
+                {misTiendas && misTiendas.some((tienda) => tienda.id === tiendaInfo.id) && (
                     <>
                         <Badge
                             color="blue"
@@ -46,7 +45,7 @@ export default function TiendaInfo({ tiendaInfo, misTiendas, setMisTiendas, setT
                     title="Edite su Tienda"
                     description="Modifique la información de su tienda"
                 >
-                    <EditarTiendaForm setTiendas={setTiendas} />
+                    <EditarTiendaForm setTiendas={setTiendas} tiendaId={tiendaInfo.id} />
                 </Modal>
             </Dialog.Root>
         </>

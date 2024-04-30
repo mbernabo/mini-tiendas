@@ -340,17 +340,15 @@ function CrearProductoForm({ setItems }) {
     );
 }
 
-function EditarTiendaForm({ setTiendas }) {
+function EditarTiendaForm({ setTiendas, tiendaId }) {
+    // Método para obtener los valores originales de forma async
     const { register, handleSubmit } = useForm({
-        defaultValues: {
-            firstName: 'John',
-            lastName: 'Doe',
-        },
+        defaultValues: async () => getFetch(`store/${tiendaId}`),
     });
     const [respuesta, setRespuesta] = useState('');
     const onSubmit = async (data) => {
         try {
-            const response = await instance.put('/api/stores', data);
+            const response = await instance.put(`/api/store/${tiendaId}`, data);
             if (response.status === 200) {
                 setRespuesta('Tienda modificada exitosamente!');
                 getFetch('stores')

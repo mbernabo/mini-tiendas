@@ -5,8 +5,11 @@ import { obtenerTiendasUser, logOutUser } from '../../api';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, removeAdmin } from '../redux/userSlice';
+import { useState } from 'react';
 
-function Navbar({ openLoginModal, setOpenLoginModal, openRegisterModal, setOpenRegisterModal }) {
+function Navbar() {
+    const [openLoginModal, setOpenLoginModal] = useState(false);
+    const [openRegisterModal, setOpenRegisterModal] = useState(false);
     return (
         <div>
             <Dialog.Root open={openLoginModal} onOpenChange={setOpenLoginModal}>
@@ -42,16 +45,9 @@ function Navbar({ openLoginModal, setOpenLoginModal, openRegisterModal, setOpenR
         </div>
     );
 }
-function NavbarLoggedIn({
-    openCrearTiendaModal,
-    setOpenCrearTiendaModal,
-    openCrearProductoModal,
-    setOpenCrearProductoModal,
-    setTiendas,
-    setMisTiendas,
-    items,
-    setItems,
-}) {
+function NavbarLoggedIn({ setTiendas, setMisTiendas, items, setItems }) {
+    const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
+    const [openCrearProductoModal, setOpenCrearProductoModal] = useState(false);
     const isAdmin = useSelector((state) => state.user.isAdmin);
     const dispatch = useDispatch();
     async function handleMisTiendas() {
@@ -61,9 +57,9 @@ function NavbarLoggedIn({
         setTiendas(tiendasUser);
     }
 
-    function handleLogOut() {
+    async function handleLogOut() {
         try {
-            logOutUser();
+            await logOutUser();
             dispatch(logout());
             dispatch(removeAdmin());
             localStorage.removeItem('access_token');

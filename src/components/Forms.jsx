@@ -340,4 +340,74 @@ function CrearProductoForm({ setItems }) {
     );
 }
 
-export { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm };
+function EditarTiendaForm({ setTiendas }) {
+    const { register, handleSubmit } = useForm({
+        defaultValues: {
+            firstName: 'John',
+            lastName: 'Doe',
+        },
+    });
+    const [respuesta, setRespuesta] = useState('');
+    const onSubmit = async (data) => {
+        try {
+            const response = await instance.put('/api/stores', data);
+            if (response.status === 200) {
+                setRespuesta('Tienda modificada exitosamente!');
+                getFetch('stores')
+                    .then((data) => {
+                        setTiendas(data);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            } else {
+                setRespuesta('Bad Request');
+            }
+        } catch (error) {
+            console.log(error);
+            setRespuesta(`Ocurrió un error en el servicio. Intente nuevamente, error: ${error}`);
+        }
+    };
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', maxWidth: '400px' }}
+            >
+                <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
+                    <label style={{ marginBottom: '0.5rem' }}>Nombre de la Tienda</label>
+                    <input {...register('name', { required: true, maxLength: 70 })} style={{ padding: '0.5rem' }} />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
+                    <label style={{ marginBottom: '0.5rem' }}>Descripción</label>
+                    <input {...register('description', { maxLength: 100 })} style={{ padding: '0.5rem' }} />
+                </div>
+                <input
+                    type="submit"
+                    style={{
+                        padding: '0.5rem',
+                        backgroundColor: '#007bff',
+                        color: '#fff',
+                        border: 'none',
+                        cursor: 'pointer',
+                    }}
+                />
+            </form>
+            <p
+                style={{
+                    marginTop: '1rem',
+                    padding: '0.5rem',
+                    backgroundColor: '#f0f0f0',
+                    border: '1px solid #ddd',
+                    borderRadius: '4px',
+                    maxWidth: '400px',
+                    textAlign: 'center',
+                }}
+            >
+                {respuesta}
+            </p>
+        </div>
+    );
+}
+
+export { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm, EditarTiendaForm };

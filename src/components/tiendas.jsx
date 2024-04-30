@@ -8,15 +8,12 @@ import { useSelector } from 'react-redux';
 
 export default function Tiendas() {
     const isAuthenticated = useSelector((state) => state.user.loggedIn);
-    const [openLoginModal, setOpenLoginModal] = useState(false);
-    const [openRegisterModal, setOpenRegisterModal] = useState(false);
-    const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
-    const [openCrearProductoModal, setOpenCrearProductoModal] = useState(false);
+
     const [todasLasTiendas, setTodasLasTiendas] = useState([]);
-    const [misTiendas, setMisTiendas] = useState([]);
+    const [misTiendas, setMisTiendas] = useState(null);
     const [tiendas, setTiendas] = useState([]);
     const [tiendaInfo, setTiendaInfo] = useState({});
-    const [items, setItems] = useState([]);
+    const [items, setItems] = useState(null);
 
     useEffect(() => {
         getFetch('stores')
@@ -40,31 +37,23 @@ export default function Tiendas() {
             });
     }
 
+    function handleClickTodasLasTiendas() {
+        setTiendas(todasLasTiendas);
+        setMisTiendas(null);
+    }
+
     return (
         <>
             <div
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}
             >
-                <h1 style={{ cursor: 'pointer' }} onClick={() => setTiendas(todasLasTiendas)}>
-                    Todas las Tiendas
+                <h1 style={{ cursor: 'pointer' }} onClick={handleClickTodasLasTiendas}>
+                    {misTiendas ? 'Mis Tiendas' : 'Todas las Tiendas'}
                 </h1>
                 {isAuthenticated ? (
-                    <NavbarLoggedIn
-                        openCrearTiendaModal={openCrearTiendaModal}
-                        setOpenCrearTiendaModal={setOpenCrearTiendaModal}
-                        openCrearProductoModal={openCrearProductoModal}
-                        setOpenCrearProductoModal={setOpenCrearProductoModal}
-                        setTiendas={setTiendas}
-                        setMisTiendas={setMisTiendas}
-                        setItems={setItems}
-                    />
+                    <NavbarLoggedIn setTiendas={setTiendas} setMisTiendas={setMisTiendas} setItems={setItems} />
                 ) : (
-                    <Navbar
-                        openLoginModal={openLoginModal}
-                        setOpenLoginModal={setOpenLoginModal}
-                        openRegisterModal={openRegisterModal}
-                        setOpenRegisterModal={setOpenRegisterModal}
-                    />
+                    <Navbar />
                 )}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>

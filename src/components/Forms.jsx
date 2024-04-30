@@ -341,23 +341,38 @@ function CrearProductoForm({ setItems }) {
 }
 
 function EditarTiendaForm({ setTiendas, tiendaId }) {
-    // Método para obtener los valores originales de forma async
-    const { register, handleSubmit } = useForm({
-        defaultValues: async () => getFetch(`store/${tiendaId}`),
-    });
+    const { register, handleSubmit, setValue } = useForm();
     const [respuesta, setRespuesta] = useState('');
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await getFetch(`store/${tiendaId}`);
+                const { name, description } = result;
+                setValue('name', name);
+                setValue('description', description);
+            } catch (error) {
+                console.error('Error al obtener la tienda:', error);
+            }
+        };
+
+        fetchData();
+    }, [tiendaId, setValue]);
+
     const onSubmit = async (data) => {
         try {
             const response = await instance.put(`/api/store/${tiendaId}`, data);
             if (response.status === 200) {
                 setRespuesta('Tienda modificada exitosamente!');
-                getFetch('stores')
-                    .then((data) => {
-                        setTiendas(data);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
+                const tiendas = await getFetch('stores');
+                setTiendas(tiendas);
+                // getFetch('stores')
+                //     .then((data) => {
+                //         setTiendas(data);
+                //     })
+                //     .catch((error) => {
+                //         console.log(error);
+                //     });
             } else {
                 setRespuesta('Bad Request');
             }

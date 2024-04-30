@@ -9,22 +9,25 @@ import { useSelector } from 'react-redux';
 export default function Tiendas() {
     const isAuthenticated = useSelector((state) => state.user.loggedIn);
 
-    const [todasLasTiendas, setTodasLasTiendas] = useState([]);
+    const [todasLasTiendas, setTodasLasTiendas] = useState(false);
     const [misTiendas, setMisTiendas] = useState(null);
     const [tiendas, setTiendas] = useState([]);
     const [tiendaInfo, setTiendaInfo] = useState({});
     const [items, setItems] = useState(null);
 
     useEffect(() => {
-        getFetch('stores')
-            .then((data) => {
-                setTodasLasTiendas(data);
-                setTiendas((prevState) => [...prevState, ...data]);
-            })
-            .catch((error) => {
+        async function fetchStores() {
+            try {
+                const data = await getFetch('stores');
+                // setTodasLasTiendas(data);
+                setTiendas(data);
+            } catch (error) {
                 console.log(error);
-            });
-    }, []);
+            }
+        }
+
+        fetchStores();
+    }, [todasLasTiendas]);
 
     function handleClickTienda(tiendaId) {
         obtenerUnaTienda(tiendaId)
@@ -38,7 +41,7 @@ export default function Tiendas() {
     }
 
     function handleClickTodasLasTiendas() {
-        setTiendas(todasLasTiendas);
+        setTodasLasTiendas((prevState) => !prevState);
         setMisTiendas(null);
     }
 
@@ -51,7 +54,13 @@ export default function Tiendas() {
                     {misTiendas ? 'Mis Tiendas' : 'Todas las Tiendas'}
                 </h1>
                 {isAuthenticated ? (
-                    <NavbarLoggedIn setTiendas={setTiendas} setMisTiendas={setMisTiendas} setItems={setItems} />
+                    <NavbarLoggedIn
+                        setTiendas={setTiendas}
+                        setMisTiendas={setMisTiendas}
+                        setItems={setItems}
+                        misTiendas={misTiendas}
+                        handleClickTodasLasTiendas={handleClickTodasLasTiendas}
+                    />
                 ) : (
                     <Navbar />
                 )}

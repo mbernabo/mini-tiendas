@@ -4,30 +4,28 @@ import TablaDeItems from './TablaDeItems';
 import { Navbar, NavbarLoggedIn } from './Navbars';
 import { getFetch, obtenerUnaTienda } from '../../api';
 import TiendaInfo from './TiendaInfo';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchTiendas } from '../redux/tiendasSlice';
 
 export default function Tiendas() {
+    const dispatch = useDispatch();
+    const tiendas = useSelector((state) => state.tiendas.tiendas);
+    const status = useSelector((state) => state.tiendas.status);
+    const error = useSelector((state) => state.tiendas.error);
+
     const isAuthenticated = useSelector((state) => state.user.loggedIn);
 
     const [todasLasTiendas, setTodasLasTiendas] = useState(false);
     const [misTiendas, setMisTiendas] = useState(null);
-    const [tiendas, setTiendas] = useState([]);
+    // const [tiendas, setTiendas] = useState([]);
     const [tiendaInfo, setTiendaInfo] = useState({});
     const [items, setItems] = useState(null);
 
     useEffect(() => {
-        async function fetchStores() {
-            try {
-                const data = await getFetch('stores');
-                // setTodasLasTiendas(data);
-                setTiendas(data);
-            } catch (error) {
-                console.log(error);
-            }
+        if (status === 'idle') {
+            dispatch(fetchTiendas());
         }
-
-        fetchStores();
-    }, [todasLasTiendas]);
+    }, [dispatch, status]);
 
     function handleClickTienda(tiendaId) {
         obtenerUnaTienda(tiendaId)
@@ -66,10 +64,14 @@ export default function Tiendas() {
                 )}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                {tiendas.map((tienda) => (
-                    <Tienda key={tienda.id} tienda={tienda} handleClickTienda={handleClickTienda} />
-                ))}
+                {status === 'loading' && <p>Cargando tiendas...</p>}
+                {status === 'succeeded' &&
+                    tiendas.map((tienda) => (
+                        <Tienda key={tienda.id} tienda={tienda} handleClickTienda={handleClickTienda} />
+                    ))}
+                {status === 'failed' && <p>Ocurrió un error al cargar las tiendas: {error}</p>}
             </div>
+
             {items && (
                 <div style={{ marginTop: '3rem' }}>
                     <TiendaInfo

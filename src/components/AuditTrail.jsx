@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import instance from '../../authAxios';
 import ValoresPistaAuditoria from './ValoresPistaAuditoria';
 
-
 export default function AuditTrail({ setAccesoHabilitado }) {
     const [open, setOpen] = useState(false);
     const [item, setItem] = useState({});
@@ -49,6 +48,8 @@ export default function AuditTrail({ setAccesoHabilitado }) {
                                 <Table.ColumnHeaderCell>User ID</Table.ColumnHeaderCell>
                                 <Table.ColumnHeaderCell>Tabla Origen</Table.ColumnHeaderCell>
                                 <Table.ColumnHeaderCell>Registro ID</Table.ColumnHeaderCell>
+                                <Table.ColumnHeaderCell>Tabla Asociada</Table.ColumnHeaderCell>
+                                <Table.ColumnHeaderCell>Registro Asociado</Table.ColumnHeaderCell>
                                 <Table.ColumnHeaderCell>Operación</Table.ColumnHeaderCell>
                                 <Table.ColumnHeaderCell>Versión</Table.ColumnHeaderCell>
                                 <Table.ColumnHeaderCell>Fecha</Table.ColumnHeaderCell>
@@ -63,6 +64,8 @@ export default function AuditTrail({ setAccesoHabilitado }) {
                                     <Table.RowHeaderCell>{item.user_id}</Table.RowHeaderCell>
                                     <Table.Cell>{item.tabla_origen}</Table.Cell>
                                     <Table.Cell>{item.registro_id}</Table.Cell>
+                                    <Table.Cell>{item.tabla_asociada}</Table.Cell>
+                                    <Table.Cell>{item.registro_asociado}</Table.Cell>
                                     <Table.Cell>{item.operacion}</Table.Cell>
                                     <Table.Cell>{item.version}</Table.Cell>
                                     <Table.Cell>{item.fecha}</Table.Cell>

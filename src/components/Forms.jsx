@@ -258,7 +258,7 @@ function CrearTiendaForm({ setTiendas }) {
         </div>
     );
 }
-function CrearProductoForm({ setItems }) {
+function CrearProductoForm({ setTiendaInfo }) {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
     const [tiendasUser, setTiendasUser] = useState([]);
@@ -282,7 +282,7 @@ function CrearProductoForm({ setItems }) {
             if (response.status === 201) {
                 const newItem = response.data;
                 setRespuesta('Producto creado exitosamente!');
-                setItems((prevItems) => [...prevItems, newItem]);
+                setTiendaInfo((prevTiendaInfo) => ({ ...prevTiendaInfo, items: [...prevTiendaInfo.items, newItem] }));
             } else {
                 setRespuesta('Bad Request');
             }

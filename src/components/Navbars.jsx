@@ -1,12 +1,11 @@
 import { Dialog, Button } from '@radix-ui/themes';
 import { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm } from './Forms';
 import Modal from './Modal';
-import { obtenerTiendasUser, logOutUser } from '../../api';
+import { logOutUser } from '../../api';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, removeAdmin } from '../redux/userSlice';
 import { useState } from 'react';
-import { setUserTiendas, setTiendasUser } from '../redux/tiendasSlice';
 
 function Navbar() {
     const [openLoginModal, setOpenLoginModal] = useState(false);
@@ -46,7 +45,7 @@ function Navbar() {
         </div>
     );
 }
-function NavbarLoggedIn({ items, setItems, handleClickTodasLasTiendas, handleMisTiendas }) {
+function NavbarLoggedIn({ setTiendaInfo, handleClickTodasLasTiendas, handleMisTiendas }) {
     const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
     const [openCrearProductoModal, setOpenCrearProductoModal] = useState(false);
     const isAdmin = useSelector((state) => state.user.isAdmin);
@@ -82,7 +81,7 @@ function NavbarLoggedIn({ items, setItems, handleClickTodasLasTiendas, handleMis
                     title="Crear Producto"
                     description="Registrate un nuevo producto"
                 >
-                    <CrearProductoForm items={items} setItems={setItems} />
+                    <CrearProductoForm setTiendaInfo={setTiendaInfo} />
                 </Modal>
             </Dialog.Root>
             {todasLasTiendas ? (
@@ -114,7 +113,7 @@ function NavbarLoggedIn({ items, setItems, handleClickTodasLasTiendas, handleMis
             </Button>
             {isAdmin && (
                 <>
-                    <Link to="auditoria">
+                    <Link to="/auditoria">
                         <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }}>
                             Auditoría
                         </Button>

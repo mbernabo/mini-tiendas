@@ -60,8 +60,7 @@ export default function Tiendas() {
                 </h1>
                 {isAuthenticated ? (
                     <NavbarLoggedIn
-                        setItems={setItems}
-                        misTiendas={misTiendas}
+                        setTiendaInfo={setTiendaInfo}
                         handleClickTodasLasTiendas={handleClickTodasLasTiendas}
                         handleMisTiendas={handleMisTiendas}
                     />

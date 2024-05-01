@@ -46,19 +46,12 @@ function Navbar() {
         </div>
     );
 }
-function NavbarLoggedIn({ items, setItems, handleClickTodasLasTiendas }) {
+function NavbarLoggedIn({ items, setItems, handleClickTodasLasTiendas, handleMisTiendas }) {
     const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
     const [openCrearProductoModal, setOpenCrearProductoModal] = useState(false);
     const isAdmin = useSelector((state) => state.user.isAdmin);
     const dispatch = useDispatch();
     const todasLasTiendas = useSelector((state) => state.todasLasTiendas);
-    
-    async function handleMisTiendas() {
-        const tiendasUser = await obtenerTiendasUser();
-        console.log(tiendasUser);
-        dispatch(setUserTiendas(tiendasUser));
-        dispatch(setTiendasUser());
-    }
 
     async function handleLogOut() {
         try {

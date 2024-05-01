@@ -7,7 +7,7 @@ import Modal from './Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { eliminarTienda } from '../redux/tiendasSlice';
 
-export default function TiendaInfo({ tiendaInfo, setItems }) {
+export default function TiendaInfo({ tiendaInfo, setTiendaInfo }) {
     const [openEditarTiendaModal, setOpenEditarTiendaModal] = useState(false);
     const userId = useSelector((state) => state.user.userId);
     const dispatch = useDispatch();
@@ -15,7 +15,7 @@ export default function TiendaInfo({ tiendaInfo, setItems }) {
     async function handleDeleteStore(tiendaId) {
         await instance.delete(`/api/store/${tiendaId}`);
         dispatch(eliminarTienda({ id: tiendaId }));
-        setItems(null);
+        setTiendaInfo(null);
     }
 
     console.log(tiendaInfo);

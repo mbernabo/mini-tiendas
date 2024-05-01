@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Tienda from './Tienda';
 import TablaDeItems from './TablaDeItems';
 import { Navbar, NavbarLoggedIn } from './Navbars';
@@ -18,31 +18,32 @@ export default function Tiendas() {
 
     const [misTiendas, setMisTiendas] = useState(null);
     // const [tiendas, setTiendas] = useState([]);
-    const [tiendaInfo, setTiendaInfo] = useState({});
+    const [tiendaInfo, setTiendaInfo] = useState(null);
     const [items, setItems] = useState(null);
 
+    const handleMisTiendas = useCallback(async () => {
+        const tiendasUser = await obtenerTiendasUser();
+        console.log(tiendasUser);
+        dispatch(setUserTiendas(tiendasUser));
+        dispatch(setTiendasUser());
+    }, [dispatch]);
+
     useEffect(() => {
-        async function makeTiendasUser() {
-            const tiendasUser = await obtenerTiendasUser();
-            dispatch(setUserTiendas(tiendasUser));
-            dispatch(setTiendasUser());
-        }
         if (status === 'idle' && todasLasTiendas) {
             dispatch(fetchTiendas());
         } else if (!todasLasTiendas) {
-            makeTiendasUser();
+            handleMisTiendas();
         }
-    }, [dispatch, status, todasLasTiendas]);
+    }, [dispatch, status, todasLasTiendas, handleMisTiendas]);
 
-    function handleClickTienda(tiendaId) {
-        obtenerUnaTienda(tiendaId)
-            .then((data) => {
-                setTiendaInfo(data);
-                setItems(data.items);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    async function handleClickTienda(tiendaId) {
+        try {
+            const data = await obtenerUnaTienda(tiendaId);
+            setTiendaInfo(data);
+            // setItems(data.items);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     function handleClickTodasLasTiendas() {
@@ -62,6 +63,7 @@ export default function Tiendas() {
                         setItems={setItems}
                         misTiendas={misTiendas}
                         handleClickTodasLasTiendas={handleClickTodasLasTiendas}
+                        handleMisTiendas={handleMisTiendas}
                     />
                 ) : (
                     <Navbar />
@@ -76,11 +78,11 @@ export default function Tiendas() {
                 {status === 'failed' && <p>Ocurrió un error al cargar las tiendas: {error}</p>}
             </div>
 
-            {items && (
+            {tiendaInfo && (
                 <div style={{ marginTop: '3rem' }}>
-                    <TiendaInfo tiendaInfo={tiendaInfo} setItems={setItems} />
+                    <TiendaInfo tiendaInfo={tiendaInfo} setTiendaInfo={setTiendaInfo} />
                     <h3>{tiendaInfo.description}</h3>
-                    <TablaDeItems items={items} setItems={setItems} misTiendas={misTiendas} />
+                    <TablaDeItems tiendaInfo={tiendaInfo} setTiendaInfo={setTiendaInfo} />
                 </div>
             )}
         </>

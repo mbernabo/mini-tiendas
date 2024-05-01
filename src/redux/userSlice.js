@@ -4,8 +4,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     loggedIn: false,
-    isAdmin: false
-    // Otros estados de usuario pueden ir aquí
+    isAdmin: false,
+    userId: null,
 };
 
 export const userSlice = createSlice({
@@ -19,14 +19,17 @@ export const userSlice = createSlice({
             state.loggedIn = false;
         },
         makeAdmin: (state) => {
-            state.isAdmin = true
+            state.isAdmin = true;
         },
         removeAdmin: (state) => {
-            state.isAdmin = false
-        }
+            state.isAdmin = false;
+        },
+        setUserId: (state, action) => {
+            state.userId = action.payload;
+        },
     },
 });
 
-export const { login, logout, makeAdmin, removeAdmin } = userSlice.actions;
+export const { login, logout, makeAdmin, removeAdmin, setUserId } = userSlice.actions;
 
 export default userSlice.reducer;

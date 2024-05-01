@@ -13,8 +13,18 @@ const tiendasSlice = createSlice({
         tiendas: [],
         status: 'idle',
         error: null,
+        todasLasTiendas: true,
     },
     reducers: {
+        setTiendasUser(state) {
+            state.todasLasTiendas = false;
+        },
+        setTodasLasTiendas(state) {
+            state.todasLasTiendas = true;
+        },
+        setUserTiendas(state, action) {
+            state.tiendas = action.payload;
+        },
         actualizarTienda(state, action) {
             const { id, nuevosDatos } = action.payload;
             const tiendaIndex = state.tiendas.findIndex((tienda) => tienda.id === id);
@@ -22,7 +32,13 @@ const tiendasSlice = createSlice({
                 state.tiendas[tiendaIndex] = { ...state.tiendas[tiendaIndex], ...nuevosDatos };
             }
         },
-        // Otras acciones para agregar, eliminar tiendas, etc.
+        eliminarTienda(state, action) {
+            const { id } = action.payload;
+            const tiendaIndex = state.tiendas.findIndex((tienda) => tienda.id === id);
+            if (tiendaIndex !== -1) {
+                state.tiendas.splice(tiendaIndex, 1);
+            }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -40,6 +56,6 @@ const tiendasSlice = createSlice({
     },
 });
 
-export const { actualizarTienda } = tiendasSlice.actions;
+export const { actualizarTienda, setTiendasUser, setUserTiendas, setTodasLasTiendas, eliminarTienda } = tiendasSlice.actions;
 
 export default tiendasSlice.reducer;

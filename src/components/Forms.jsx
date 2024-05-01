@@ -5,7 +5,8 @@ import { Flex } from '@radix-ui/themes';
 import { getFetch } from '../../api';
 import { obtenerTiendasUser } from '../../api';
 import { useSelector, useDispatch } from 'react-redux';
-import { login, makeAdmin } from '../redux/userSlice';
+import { login, makeAdmin, setUserId } from '../redux/userSlice';
+import { actualizarTienda } from '../redux/tiendasSlice';
 import axios from 'axios';
 import instance from '../../authAxios';
 
@@ -45,6 +46,9 @@ function LoginForm() {
                     // Guardar tokens en localStorage
                     localStorage.setItem('access_token', response.data.access_token);
                     localStorage.setItem('refresh_token', response.data.refresh_token);
+                    console.log(response.data);
+                    const userId = response.data.user_id;
+                    dispatch(setUserId(userId));
                     setAdminStatus();
 
                     // Actualizar estado de la aplicación
@@ -340,9 +344,10 @@ function CrearProductoForm({ setItems }) {
     );
 }
 
-function EditarTiendaForm({ setTiendas, tiendaId }) {
+function EditarTiendaForm({ tiendaId }) {
     const { register, handleSubmit, setValue } = useForm();
     const [respuesta, setRespuesta] = useState('');
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -364,15 +369,8 @@ function EditarTiendaForm({ setTiendas, tiendaId }) {
             const response = await instance.put(`/api/store/${tiendaId}`, data);
             if (response.status === 200) {
                 setRespuesta('Tienda modificada exitosamente!');
-                const tiendas = await getFetch('stores');
-                setTiendas(tiendas);
-                // getFetch('stores')
-                //     .then((data) => {
-                //         setTiendas(data);
-                //     })
-                //     .catch((error) => {
-                //         console.log(error);
-                //     });
+                const nuevaTienda = await response.data;
+                dispatch(actualizarTienda({ id: tiendaId, nuevosDatos: nuevaTienda }));
             } else {
                 setRespuesta('Bad Request');
             }

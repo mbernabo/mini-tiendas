@@ -2,30 +2,37 @@ import { useState, useEffect } from 'react';
 import Tienda from './Tienda';
 import TablaDeItems from './TablaDeItems';
 import { Navbar, NavbarLoggedIn } from './Navbars';
-import { getFetch, obtenerUnaTienda } from '../../api';
+import { obtenerUnaTienda, obtenerTiendasUser } from '../../api';
 import TiendaInfo from './TiendaInfo';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchTiendas } from '../redux/tiendasSlice';
+import { fetchTiendas, setTiendasUser, setUserTiendas, setTodasLasTiendas } from '../redux/tiendasSlice';
 
 export default function Tiendas() {
     const dispatch = useDispatch();
     const tiendas = useSelector((state) => state.tiendas.tiendas);
     const status = useSelector((state) => state.tiendas.status);
     const error = useSelector((state) => state.tiendas.error);
+    const todasLasTiendas = useSelector((state) => state.tiendas.todasLasTiendas);
 
     const isAuthenticated = useSelector((state) => state.user.loggedIn);
 
-    const [todasLasTiendas, setTodasLasTiendas] = useState(false);
     const [misTiendas, setMisTiendas] = useState(null);
     // const [tiendas, setTiendas] = useState([]);
     const [tiendaInfo, setTiendaInfo] = useState({});
     const [items, setItems] = useState(null);
 
     useEffect(() => {
-        if (status === 'idle') {
-            dispatch(fetchTiendas());
+        async function makeTiendasUser() {
+            const tiendasUser = await obtenerTiendasUser();
+            dispatch(setUserTiendas(tiendasUser));
+            dispatch(setTiendasUser());
         }
-    }, [dispatch, status]);
+        if (status === 'idle' && todasLasTiendas) {
+            dispatch(fetchTiendas());
+        } else if (!todasLasTiendas) {
+            makeTiendasUser();
+        }
+    }, [dispatch, status, todasLasTiendas]);
 
     function handleClickTienda(tiendaId) {
         obtenerUnaTienda(tiendaId)
@@ -39,8 +46,7 @@ export default function Tiendas() {
     }
 
     function handleClickTodasLasTiendas() {
-        setTodasLasTiendas((prevState) => !prevState);
-        setMisTiendas(null);
+        dispatch(setTodasLasTiendas());
     }
 
     return (
@@ -53,8 +59,6 @@ export default function Tiendas() {
                 </h1>
                 {isAuthenticated ? (
                     <NavbarLoggedIn
-                        setTiendas={setTiendas}
-                        setMisTiendas={setMisTiendas}
                         setItems={setItems}
                         misTiendas={misTiendas}
                         handleClickTodasLasTiendas={handleClickTodasLasTiendas}
@@ -74,13 +78,7 @@ export default function Tiendas() {
 
             {items && (
                 <div style={{ marginTop: '3rem' }}>
-                    <TiendaInfo
-                        tiendaInfo={tiendaInfo}
-                        misTiendas={misTiendas}
-                        setMisTiendas={setMisTiendas}
-                        setTiendas={setTiendas}
-                        setItems={setItems}
-                    />
+                    <TiendaInfo tiendaInfo={tiendaInfo} setItems={setItems} />
                     <h3>{tiendaInfo.description}</h3>
                     <TablaDeItems items={items} setItems={setItems} misTiendas={misTiendas} />
                 </div>

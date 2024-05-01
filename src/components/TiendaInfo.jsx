@@ -4,23 +4,27 @@ import { Dialog } from '@radix-ui/themes';
 import { EditarTiendaForm } from './Forms';
 import { useState } from 'react';
 import Modal from './Modal';
+import { useDispatch, useSelector } from 'react-redux';
+import { eliminarTienda } from '../redux/tiendasSlice';
 
-export default function TiendaInfo({ tiendaInfo, misTiendas, setMisTiendas, setTiendas, setItems }) {
+export default function TiendaInfo({ tiendaInfo, setItems }) {
     const [openEditarTiendaModal, setOpenEditarTiendaModal] = useState(false);
+    const userId = useSelector((state) => state.user.userId);
+    const dispatch = useDispatch();
 
     async function handleDeleteStore(tiendaId) {
         await instance.delete(`/api/store/${tiendaId}`);
-        const tiendasActuales = misTiendas.filter((tienda) => tienda.id !== tiendaId);
-        setMisTiendas(tiendasActuales);
-        setTiendas(tiendasActuales);
+        dispatch(eliminarTienda({ id: tiendaId }));
         setItems(null);
     }
+
+    console.log(tiendaInfo);
 
     return (
         <>
             <div>
                 <h2>Productos de {tiendaInfo.name}</h2>
-                {misTiendas && misTiendas.some((tienda) => tienda.id === tiendaInfo.id) && (
+                {tiendaInfo.user_id === userId && (
                     <>
                         <Badge
                             color="blue"
@@ -45,7 +49,7 @@ export default function TiendaInfo({ tiendaInfo, misTiendas, setMisTiendas, setT
                     title="Edite su Tienda"
                     description="Modifique la información de su tienda"
                 >
-                    <EditarTiendaForm setTiendas={setTiendas} tiendaId={tiendaInfo.id} />
+                    <EditarTiendaForm tiendaId={tiendaInfo.id} />
                 </Modal>
             </Dialog.Root>
         </>

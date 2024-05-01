@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, removeAdmin } from '../redux/userSlice';
 import { useState } from 'react';
+import { setUserTiendas, setTiendasUser } from '../redux/tiendasSlice';
 
 function Navbar() {
     const [openLoginModal, setOpenLoginModal] = useState(false);
@@ -45,16 +46,18 @@ function Navbar() {
         </div>
     );
 }
-function NavbarLoggedIn({ setTiendas, setMisTiendas, items, setItems, misTiendas, handleClickTodasLasTiendas }) {
+function NavbarLoggedIn({ items, setItems, handleClickTodasLasTiendas }) {
     const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
     const [openCrearProductoModal, setOpenCrearProductoModal] = useState(false);
     const isAdmin = useSelector((state) => state.user.isAdmin);
     const dispatch = useDispatch();
+    const todasLasTiendas = useSelector((state) => state.todasLasTiendas);
+    
     async function handleMisTiendas() {
         const tiendasUser = await obtenerTiendasUser();
         console.log(tiendasUser);
-        setMisTiendas(tiendasUser);
-        setTiendas(tiendasUser);
+        dispatch(setUserTiendas(tiendasUser));
+        dispatch(setTiendasUser());
     }
 
     async function handleLogOut() {
@@ -76,7 +79,7 @@ function NavbarLoggedIn({ setTiendas, setMisTiendas, items, setItems, misTiendas
                     title="Crear Tienda"
                     description="Ingrese la información de la tienda que quiere crear"
                 >
-                    <CrearTiendaForm setTiendas={setTiendas} />
+                    <CrearTiendaForm />
                 </Modal>
             </Dialog.Root>
 
@@ -89,7 +92,7 @@ function NavbarLoggedIn({ setTiendas, setMisTiendas, items, setItems, misTiendas
                     <CrearProductoForm items={items} setItems={setItems} />
                 </Modal>
             </Dialog.Root>
-            {misTiendas ? (
+            {todasLasTiendas ? (
                 <Button
                     variant="ghost"
                     style={{ cursor: 'pointer', marginRight: '0.5rem' }}

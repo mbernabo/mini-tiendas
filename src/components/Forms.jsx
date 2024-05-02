@@ -198,7 +198,7 @@ function RegisterForm() {
 function CrearTiendaForm() {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const onSubmit = async (data) => {
         try {
             const response = await instance.post('/api/stores', data);
@@ -278,7 +278,7 @@ function CrearProductoForm({ setTiendaInfo }) {
             if (response.status === 201) {
                 const newItem = response.data;
                 setRespuesta('Producto creado exitosamente!');
-                setTiendaInfo((prevTiendaInfo) => ({ ...prevTiendaInfo, items: [...prevTiendaInfo.items, newItem] }));
+                setTiendaInfo((prevTiendaInfo) => ({ ...prevTiendaInfo, items: [...prevTiendaInfo.items ?? [], newItem] }));
             } else {
                 setRespuesta('Bad Request');
             }

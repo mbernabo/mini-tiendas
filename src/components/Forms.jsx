@@ -9,6 +9,7 @@ import { login, makeAdmin, setUserId } from '../redux/userSlice';
 import { actualizarTienda } from '../redux/tiendasSlice';
 import axios from 'axios';
 import instance from '../../authAxios';
+import { fetchTiendas } from '../redux/tiendasSlice';
 
 const BASE_URL = 'http://127.0.0.1:5000';
 // const BASE_URL = 'https://mini-tiendas-api-qq9a.onrender.com';
@@ -194,21 +195,16 @@ function RegisterForm() {
     );
 }
 
-function CrearTiendaForm({ setTiendas }) {
+function CrearTiendaForm() {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
+    const dispatch = useDispatch()
     const onSubmit = async (data) => {
         try {
             const response = await instance.post('/api/stores', data);
             if (response.status === 201) {
                 setRespuesta('Tienda creada exitosamente!');
-                getFetch('stores')
-                    .then((data) => {
-                        setTiendas(data);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
+                dispatch(fetchTiendas());
             } else {
                 setRespuesta('Bad Request');
             }

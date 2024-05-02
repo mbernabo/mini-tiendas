@@ -16,11 +16,8 @@ const tiendasSlice = createSlice({
         todasLasTiendas: true,
     },
     reducers: {
-        setTiendasUser(state) {
-            state.todasLasTiendas = false;
-        },
-        setTodasLasTiendas(state) {
-            state.todasLasTiendas = true;
+        toggleTodasLasTiendas(state) {
+            state.todasLasTiendas = !state.todasLasTiendas;
         },
         setUserTiendas(state, action) {
             state.tiendas = action.payload;
@@ -56,6 +53,6 @@ const tiendasSlice = createSlice({
     },
 });
 
-export const { actualizarTienda, setTiendasUser, setUserTiendas, setTodasLasTiendas, eliminarTienda } = tiendasSlice.actions;
+export const { actualizarTienda, setUserTiendas, toggleTodasLasTiendas, eliminarTienda } = tiendasSlice.actions;
 
 export default tiendasSlice.reducer;

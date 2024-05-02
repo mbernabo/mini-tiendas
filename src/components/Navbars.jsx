@@ -45,7 +45,7 @@ function Navbar() {
         </div>
     );
 }
-function NavbarLoggedIn({ setTiendaInfo, handleClickTodasLasTiendas, handleMisTiendas }) {
+function NavbarLoggedIn({ setTiendaInfo, toogleTiendas }) {
     const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
     const [openCrearProductoModal, setOpenCrearProductoModal] = useState(false);
     const isAdmin = useSelector((state) => state.user.isAdmin);
@@ -84,19 +84,10 @@ function NavbarLoggedIn({ setTiendaInfo, handleClickTodasLasTiendas, handleMisTi
                     <CrearProductoForm setTiendaInfo={setTiendaInfo} />
                 </Modal>
             </Dialog.Root>
-            {todasLasTiendas ? (
-                <Button
-                    variant="ghost"
-                    style={{ cursor: 'pointer', marginRight: '0.5rem' }}
-                    onClick={handleClickTodasLasTiendas}
-                >
-                    Todas las Tiendas
-                </Button>
-            ) : (
-                <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }} onClick={handleMisTiendas}>
-                    Mis Tiendas
-                </Button>
-            )}
+            <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }} onClick={toogleTiendas}>
+                {todasLasTiendas ? 'Todas las Tiendas' : 'Mis Tiendas'}
+            </Button>
+
             <Button
                 variant="ghost"
                 style={{ cursor: 'pointer', marginRight: '0.5rem' }}

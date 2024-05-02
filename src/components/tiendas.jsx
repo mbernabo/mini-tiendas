@@ -5,7 +5,7 @@ import { Navbar, NavbarLoggedIn } from './Navbars';
 import { obtenerUnaTienda, obtenerTiendasUser } from '../../api';
 import TiendaInfo from './TiendaInfo';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchTiendas, setTiendasUser, setUserTiendas, setTodasLasTiendas } from '../redux/tiendasSlice';
+import { fetchTiendas, setUserTiendas, toggleTodasLasTiendas } from '../redux/tiendasSlice';
 
 export default function Tiendas() {
     const dispatch = useDispatch();
@@ -16,16 +16,13 @@ export default function Tiendas() {
 
     const isAuthenticated = useSelector((state) => state.user.loggedIn);
 
-    const [misTiendas, setMisTiendas] = useState(null);
-    // const [tiendas, setTiendas] = useState([]);
     const [tiendaInfo, setTiendaInfo] = useState(null);
-    const [items, setItems] = useState(null);
 
     const handleMisTiendas = useCallback(async () => {
         const tiendasUser = await obtenerTiendasUser();
         console.log(tiendasUser);
         dispatch(setUserTiendas(tiendasUser));
-        dispatch(setTiendasUser());
+        dispatch(toggleTodasLasTiendas());
     }, [dispatch]);
 
     useEffect(() => {
@@ -46,8 +43,8 @@ export default function Tiendas() {
         }
     }
 
-    function handleClickTodasLasTiendas() {
-        dispatch(setTodasLasTiendas());
+    function toogleTiendas() {
+        dispatch(toggleTodasLasTiendas());
     }
 
     return (
@@ -55,15 +52,11 @@ export default function Tiendas() {
             <div
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}
             >
-                <h1 style={{ cursor: 'pointer' }} onClick={handleClickTodasLasTiendas}>
-                    {misTiendas ? 'Mis Tiendas' : 'Todas las Tiendas'}
+                <h1 style={{ cursor: 'pointer' }} onClick={toogleTiendas}>
+                    {todasLasTiendas ? 'Todas las Tiendas' : 'Mis Tiendas'}
                 </h1>
                 {isAuthenticated ? (
-                    <NavbarLoggedIn
-                        setTiendaInfo={setTiendaInfo}
-                        handleClickTodasLasTiendas={handleClickTodasLasTiendas}
-                        handleMisTiendas={handleMisTiendas}
-                    />
+                    <NavbarLoggedIn setTiendaInfo={setTiendaInfo} toogleTiendas={toogleTiendas} />
                 ) : (
                     <Navbar />
                 )}

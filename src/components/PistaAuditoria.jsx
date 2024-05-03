@@ -1,20 +1,113 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import instance from '../../authAxios';
+import { Heading, Table } from '@radix-ui/themes';
 export default function PistaAuditoria() {
     const { idPista } = useParams();
-    
-    useEffect(() => {
-        
-        async function fetchPistaAuditoria() {
-            const response = instance.get()
+    const [data, setData] = useState(null);
 
+    useEffect(() => {
+        async function fetchPistaAuditoria() {
+            const response = await instance.get(`/api/auditoria/pista/${idPista}`);
+            const first_data = response.data;
+            const parsed_data = first_data.map((item) => ({
+                ...item,
+                valores_originales: item.valores_originales ? JSON.parse(item.valores_originales) : null,
+                valores_nuevos: item.valores_nuevos ? JSON.parse(item.valores_nuevos) : null,
+            }));
+
+            // Idea inicial para pasar todo el registro de auditoría como texto
+            // Podría poner un botón con tooltip que diga "explicar" o mostrar detalle y mostrar esto
+            // const data = parsed_data.map((item) => {
+            //     const operación = item.operacion === 'CREATE' ? 'Creación' : item.operacion === 'UPDATE' ? 'Actualización' : 'Borrado'
+            //     const tabla =
+            //     {
+            //         evento:
+            //     }
+            // })
+            setData(parsed_data);
+            console.log(parsed_data);
         }
-    })
+
+        fetchPistaAuditoria();
+    }, [idPista]);
     return (
         <div>
-            <h1>Pista de Auditoría #{idPista}</h1>
-            {/* Aquí puedes mostrar información relacionada con la pista de auditoría */}
+            <Heading as="h3">{`Auditoría Tienda ID #${idPista}`}</Heading>
+            {data && (
+                <Table.Root>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.ColumnHeaderCell>Evento</Table.ColumnHeaderCell>
+                            <Table.ColumnHeaderCell>Tabla Origen</Table.ColumnHeaderCell>
+
+                            <Table.ColumnHeaderCell>Valores Originales</Table.ColumnHeaderCell>
+                            <Table.ColumnHeaderCell>Valores Nuevos</Table.ColumnHeaderCell>
+                            <Table.ColumnHeaderCell>Fecha</Table.ColumnHeaderCell>
+                            <Table.ColumnHeaderCell>Usuario</Table.ColumnHeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+
+                    <Table.Body>
+                        {data.map((item) => (
+                            <Table.Row key={item.id}>
+                                <Table.RowHeaderCell>{item.operacion}</Table.RowHeaderCell>
+                                <Table.Cell>{item.tabla_origen}</Table.Cell>
+                                <Table.Cell>
+                                    <Table.Root>
+                                        <Table.Header>
+                                            <Table.Row>
+                                                <Table.ColumnHeaderCell>Nombre</Table.ColumnHeaderCell>
+                                                <Table.ColumnHeaderCell>Descripción</Table.ColumnHeaderCell>
+                                                <Table.ColumnHeaderCell>Usuario</Table.ColumnHeaderCell>
+                                            </Table.Row>
+                                        </Table.Header>
+                                        <Table.Body>
+                                            {item.valores_originales ? (
+                                                <Table.Row>
+                                                    <Table.Cell>{item.valores_originales.name}</Table.Cell>
+                                                    <Table.Cell>{item.valores_originales.descripcion}</Table.Cell>
+                                                    <Table.Cell>{item.valores_originales.user_id}</Table.Cell>
+                                                </Table.Row>
+                                            ) : (
+                                                <Table.Row>
+                                                    <Table.Cell>Sin datos</Table.Cell>
+                                                </Table.Row>
+                                            )}
+                                        </Table.Body>
+                                    </Table.Root>
+                                </Table.Cell>
+                                <Table.Cell>
+                                    <Table.Root>
+                                        <Table.Header>
+                                            <Table.Row>
+                                                <Table.ColumnHeaderCell>Nombre</Table.ColumnHeaderCell>
+                                                <Table.ColumnHeaderCell>Descripción</Table.ColumnHeaderCell>
+                                                <Table.ColumnHeaderCell>Usuario</Table.ColumnHeaderCell>
+                                            </Table.Row>
+                                        </Table.Header>
+                                        <Table.Body>
+                                            {item.valores_nuevos ? (
+                                                <Table.Row>
+                                                    <Table.Cell>{item.valores_nuevos.name}</Table.Cell>
+                                                    <Table.Cell>{item.valores_nuevos.descripcion}</Table.Cell>
+                                                    <Table.Cell>{item.valores_nuevos.user_id}</Table.Cell>
+                                                </Table.Row>
+                                            ) : (
+                                                <Table.Row>
+                                                    <Table.Cell>Sin datos</Table.Cell>
+                                                </Table.Row>
+                                            )}
+                                        </Table.Body>
+                                    </Table.Root>
+                                </Table.Cell>
+                                <Table.Cell>{item.fecha}</Table.Cell>
+                                <Table.Cell>{item.user_id}</Table.Cell>
+                            </Table.Row>
+                        ))}
+                    </Table.Body>
+                </Table.Root>
+            )}
         </div>
     );
 }

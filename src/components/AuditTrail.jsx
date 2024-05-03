@@ -41,7 +41,7 @@ export default function AuditTrail({ setAccesoHabilitado }) {
         <>
             <Heading as="h3">Audit Trail completo</Heading>
             {data ? (
-                <>
+                <div style={{ marginTop: '30px' }}>
                     <Table.Root>
                         <Table.Header>
                             <Table.Row>
@@ -90,7 +90,7 @@ export default function AuditTrail({ setAccesoHabilitado }) {
                             <ValoresPistaAuditoria valoresPista={valoresPista} item={item} />
                         </Modal>
                     </Dialog.Root>
-                </>
+                </div>
             ) : (
                 <p>Cargando..</p>
             )}

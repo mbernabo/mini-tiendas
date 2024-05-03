@@ -27,31 +27,33 @@ export default function AuditoriaDeTiendas({ setAccesoHabilitado }) {
         <>
             <Heading as="h3">Auditoría Tiendas</Heading>
             {data ? (
-                <Table.Root>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.ColumnHeaderCell>Nombre de la Tienda</Table.ColumnHeaderCell>
-                            <Table.ColumnHeaderCell>Fecha creación</Table.ColumnHeaderCell>
-                            <Table.ColumnHeaderCell>Nombre del Creador</Table.ColumnHeaderCell>
-                            <Table.ColumnHeaderCell>Ver Pista</Table.ColumnHeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-
-                    <Table.Body>
-                        {data.map((tienda) => (
-                            <Table.Row key={tienda.pista_id}>
-                                <Table.RowHeaderCell>{tienda.nombre_original_tienda}</Table.RowHeaderCell>
-                                <Table.Cell>{new Date(tienda.fecha_creacion).toLocaleDateString()}</Table.Cell>
-                                <Table.Cell>{tienda.nombre_usuario}</Table.Cell>
-                                <Table.Cell>
-                                    <Link to={`/auditoria/pista/${tienda.pista_id}`}>
-                                        <ThickArrowRightIcon />
-                                    </Link>
-                                </Table.Cell>
+                <div style={{ marginTop: '30px' }}>
+                    <Table.Root>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.ColumnHeaderCell>Nombre de la Tienda</Table.ColumnHeaderCell>
+                                <Table.ColumnHeaderCell>Fecha creación</Table.ColumnHeaderCell>
+                                <Table.ColumnHeaderCell>Nombre del Creador</Table.ColumnHeaderCell>
+                                <Table.ColumnHeaderCell>Ver Pista</Table.ColumnHeaderCell>
                             </Table.Row>
-                        ))}
-                    </Table.Body>
-                </Table.Root>
+                        </Table.Header>
+
+                        <Table.Body>
+                            {data.map((tienda) => (
+                                <Table.Row key={tienda.pista_id}>
+                                    <Table.RowHeaderCell>{tienda.nombre_original_tienda}</Table.RowHeaderCell>
+                                    <Table.Cell>{new Date(tienda.fecha_creacion).toLocaleDateString()}</Table.Cell>
+                                    <Table.Cell>{tienda.nombre_usuario}</Table.Cell>
+                                    <Table.Cell>
+                                        <Link to={`/auditoria/pista/${tienda.pista_id}`}>
+                                            <ThickArrowRightIcon />
+                                        </Link>
+                                    </Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table.Root>
+                </div>
             ) : (
                 <p>Cargando..</p>
             )}

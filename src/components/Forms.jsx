@@ -6,10 +6,9 @@ import { getFetch } from '../../api';
 import { obtenerTiendasUser } from '../../api';
 import { useSelector, useDispatch } from 'react-redux';
 import { login, makeAdmin, setUserId } from '../redux/userSlice';
-import { actualizarTienda } from '../redux/tiendasSlice';
+import { actualizarTienda, toggleTodasLasTiendas } from '../redux/tiendasSlice';
 import axios from 'axios';
 import instance from '../../authAxios';
-import { fetchTiendas } from '../redux/tiendasSlice';
 
 const BASE_URL = 'http://127.0.0.1:5000';
 // const BASE_URL = 'https://mini-tiendas-api-qq9a.onrender.com';
@@ -195,16 +194,21 @@ function RegisterForm() {
     );
 }
 
-function CrearTiendaForm() {
+function CrearTiendaForm({ fetchTiendas }) {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
+    const todasLasTiendas = useSelector((state) => state.tiendas.todasLasTiendas);
     const dispatch = useDispatch();
+
     const onSubmit = async (data) => {
         try {
             const response = await instance.post('/api/stores', data);
             if (response.status === 201) {
                 setRespuesta('Tienda creada exitosamente!');
-                dispatch(fetchTiendas());
+                fetchTiendas();
+                if (!todasLasTiendas) {
+                    dispatch(toggleTodasLasTiendas());
+                }
             } else {
                 setRespuesta('Bad Request');
             }
@@ -278,7 +282,10 @@ function CrearProductoForm({ setTiendaInfo }) {
             if (response.status === 201) {
                 const newItem = response.data;
                 setRespuesta('Producto creado exitosamente!');
-                setTiendaInfo((prevTiendaInfo) => ({ ...prevTiendaInfo, items: [...prevTiendaInfo.items ?? [], newItem] }));
+                setTiendaInfo((prevTiendaInfo) => ({
+                    ...prevTiendaInfo,
+                    items: [...(prevTiendaInfo.items ?? []), newItem],
+                }));
             } else {
                 setRespuesta('Bad Request');
             }
@@ -340,7 +347,7 @@ function CrearProductoForm({ setTiendaInfo }) {
     );
 }
 
-function EditarTiendaForm({ tiendaId }) {
+function EditarTiendaForm({ tiendaId, setTiendaInfo }) {
     const { register, handleSubmit, setValue } = useForm();
     const [respuesta, setRespuesta] = useState('');
     const dispatch = useDispatch();
@@ -367,6 +374,7 @@ function EditarTiendaForm({ tiendaId }) {
                 setRespuesta('Tienda modificada exitosamente!');
                 const nuevaTienda = await response.data;
                 dispatch(actualizarTienda({ id: tiendaId, nuevosDatos: nuevaTienda }));
+                setTiendaInfo(nuevaTienda)
             } else {
                 setRespuesta('Bad Request');
             }

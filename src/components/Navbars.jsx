@@ -53,10 +53,12 @@ function Navbar() {
         </div>
     );
 }
-function NavbarLoggedIn({ setTiendaInfo, toogleTiendas, todasLasTiendas }) {
+function NavbarLoggedIn({ setTiendaInfo, toogleTiendas, todasLasTiendas, fetchTiendas }) {
     const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
     const [openCrearProductoModal, setOpenCrearProductoModal] = useState(false);
     const isAdmin = useSelector((state) => state.user.isAdmin);
+    const userName = useSelector((state) => state.user.userName);
+
     const dispatch = useDispatch();
 
     async function handleLogOut() {
@@ -78,7 +80,7 @@ function NavbarLoggedIn({ setTiendaInfo, toogleTiendas, todasLasTiendas }) {
                     title="Crear Tienda"
                     description="Ingrese la información de la tienda que quiere crear"
                 >
-                    <CrearTiendaForm />
+                    <CrearTiendaForm fetchTiendas={fetchTiendas} />
                 </Modal>
             </Dialog.Root>
 
@@ -92,7 +94,7 @@ function NavbarLoggedIn({ setTiendaInfo, toogleTiendas, todasLasTiendas }) {
                 </Modal>
             </Dialog.Root>
             <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }} onClick={toogleTiendas}>
-                {todasLasTiendas ? 'Todas las Tiendas' : 'Mis Tiendas'}
+                {todasLasTiendas ? 'Mis Tiendas' : 'Todas las Tiendas'}
             </Button>
 
             <Button
@@ -118,8 +120,11 @@ function NavbarLoggedIn({ setTiendaInfo, toogleTiendas, todasLasTiendas }) {
                     </Link>
                 </>
             )}
-            <Button variant="ghost" style={{ cursor: 'pointer' }} onClick={handleLogOut}>
+            <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }} onClick={handleLogOut}>
                 Log Out
+            </Button>
+            <Button variant="ghost" style={{ cursor: 'pointer' }}>
+                {userName}
             </Button>
         </div>
     );

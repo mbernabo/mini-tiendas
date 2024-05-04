@@ -2,28 +2,31 @@ import { useState, useEffect, useCallback } from 'react';
 import Tienda from './Tienda';
 import TablaDeItems from './TablaDeItems';
 import { Navbar, NavbarLoggedIn } from './Navbars';
-import { obtenerUnaTienda, obtenerTiendasUser } from '../../api';
+import { obtenerUnaTienda, obtenerTiendasUser, getFetch } from '../../api';
 import TiendaInfo from './TiendaInfo';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchTiendas, setUserTiendas, toggleTodasLasTiendas } from '../redux/tiendasSlice';
-import { login, makeAdmin } from '../redux/userSlice';
+import { setTiendas, toggleTodasLasTiendas } from '../redux/tiendasSlice';
+import { login, makeAdmin, setUserId, setUserName } from '../redux/userSlice';
 import instance from '../../authAxios';
 
 export default function Tiendas() {
     const dispatch = useDispatch();
     const tiendas = useSelector((state) => state.tiendas.tiendas);
-    const status = useSelector((state) => state.tiendas.status);
-    const error = useSelector((state) => state.tiendas.error);
     const todasLasTiendas = useSelector((state) => state.tiendas.todasLasTiendas);
-
     const isAuthenticated = useSelector((state) => state.user.loggedIn);
-
     const [tiendaInfo, setTiendaInfo] = useState(null);
 
     const handleMisTiendas = useCallback(async () => {
         const tiendasUser = await obtenerTiendasUser();
         console.log(tiendasUser);
-        dispatch(setUserTiendas(tiendasUser));
+        dispatch(setTiendas(tiendasUser));
+        // dispatch(toggleTodasLasTiendas());
+    }, [dispatch]);
+
+    const fetchTiendas = useCallback(async () => {
+        const tiendas = await getFetch('stores');
+        console.log(tiendas);
+        dispatch(setTiendas(tiendas));
         // dispatch(toggleTodasLasTiendas());
     }, [dispatch]);
 
@@ -32,6 +35,10 @@ export default function Tiendas() {
             const response = await instance.get('api/users/check-login');
             if (response.status === 200) {
                 dispatch(login());
+                const userId = response.data.user_id;
+                const userName = response.data.email;
+                dispatch(setUserId(userId));
+                dispatch(setUserName(userName));
             }
         };
 
@@ -52,11 +59,11 @@ export default function Tiendas() {
         }
 
         if (todasLasTiendas) {
-            dispatch(fetchTiendas());
+            fetchTiendas();
         } else {
             handleMisTiendas();
         }
-    }, [dispatch, status, todasLasTiendas, handleMisTiendas, isAuthenticated]);
+    }, [dispatch, todasLasTiendas, fetchTiendas, handleMisTiendas, isAuthenticated]);
 
     async function handleClickTienda(tiendaId) {
         try {
@@ -85,18 +92,20 @@ export default function Tiendas() {
                         setTiendaInfo={setTiendaInfo}
                         toogleTiendas={toogleTiendas}
                         todasLasTiendas={todasLasTiendas}
+                        fetchTiendas={fetchTiendas}
                     />
                 ) : (
                     <Navbar />
                 )}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                {status === 'loading' && <p>Cargando tiendas...</p>}
-                {status === 'succeeded' &&
+                {tiendas ? (
                     tiendas.map((tienda) => (
                         <Tienda key={tienda.id} tienda={tienda} handleClickTienda={handleClickTienda} />
-                    ))}
-                {status === 'failed' && <p>Ocurrió un error al cargar las tiendas: {error}</p>}
+                    ))
+                ) : (
+                    <p>Cargando tiendas..</p>
+                )}
             </div>
 
             {tiendaInfo && (

@@ -1,5 +1,4 @@
 import instance from './authAxios';
-// const BASE_URL = 'https://mini-tiendas-api-qq9a.onrender.com';
 const BASE_URL = 'http://127.0.0.1:5000';
 
 async function getFetch(endpoint) {
@@ -24,6 +23,7 @@ async function getFetch(endpoint) {
         throw error;
     }
 }
+
 
 async function obtenerTiendasUser() {
     try {

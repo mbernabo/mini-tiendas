@@ -1,26 +1,24 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { getFetch } from '../../api';
 
 // Acción asincrónica para obtener los datos de las tiendas
-export const fetchTiendas = createAsyncThunk('tiendas/fetchTiendas', async () => {
+export const fetchTiendas = async () => {
     const tiendasData = await getFetch('stores');
     return tiendasData;
-});
+};
 
 const tiendasSlice = createSlice({
     name: 'tiendas',
     initialState: {
-        tiendas: [],
-        status: 'idle',
-        error: null,
+        tiendas: false,
         todasLasTiendas: true,
     },
     reducers: {
+        setTiendas(state, action) {
+            state.tiendas = action.payload;
+        },
         toggleTodasLasTiendas(state) {
             state.todasLasTiendas = !state.todasLasTiendas;
-        },
-        setUserTiendas(state, action) {
-            state.tiendas = action.payload;
         },
         actualizarTienda(state, action) {
             const { id, nuevosDatos } = action.payload;
@@ -37,22 +35,8 @@ const tiendasSlice = createSlice({
             }
         },
     },
-    extraReducers: (builder) => {
-        builder
-            .addCase(fetchTiendas.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(fetchTiendas.fulfilled, (state, action) => {
-                state.status = 'succeeded';
-                state.tiendas = action.payload;
-            })
-            .addCase(fetchTiendas.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.error.message;
-            });
-    },
 });
 
-export const { actualizarTienda, setUserTiendas, toggleTodasLasTiendas, eliminarTienda } = tiendasSlice.actions;
+export const { actualizarTienda, setTiendas, toggleTodasLasTiendas, eliminarTienda } = tiendasSlice.actions;
 
 export default tiendasSlice.reducer;

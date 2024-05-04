@@ -49,7 +49,7 @@ export default function TiendaInfo({ tiendaInfo, setTiendaInfo }) {
                     title="Edite su Tienda"
                     description="Modifique la información de su tienda"
                 >
-                    <EditarTiendaForm tiendaId={tiendaInfo.id} />
+                    <EditarTiendaForm tiendaId={tiendaInfo.id} setTiendaInfo={setTiendaInfo} />
                 </Modal>
             </Dialog.Root>
         </>

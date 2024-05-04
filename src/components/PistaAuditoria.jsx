@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import instance from '../../authAxios';
-import { Heading, Table, Text } from '@radix-ui/themes';
+import { Heading, Table, Text, Button } from '@radix-ui/themes';
+import { Link } from 'react-router-dom';
 export default function PistaAuditoria() {
     const { idPista } = useParams();
     const [data, setData] = useState(null);
@@ -33,7 +34,23 @@ export default function PistaAuditoria() {
     }, [idPista]);
     return (
         <div>
-            <Heading as="h3" style={{ marginBottom: '20px' }}>{`Auditoría de Tienda`}</Heading>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '1rem',
+                }}
+            >
+                <Heading as="h3" style={{ marginBottom: '20px' }}>
+                    Auditoría de Tienda
+                </Heading>
+                <Link to="/auditoria">
+                    <Button variant="ghost" style={{ cursor: 'pointer' }}>
+                        Volver
+                    </Button>
+                </Link>
+            </div>
             {data ? (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Text size="4">{`Nombre Inicial: ${data[0].valores_nuevos.name}`}</Text>
@@ -48,7 +65,7 @@ export default function PistaAuditoria() {
                         <Table.Row>
                             <Table.ColumnHeaderCell>Evento</Table.ColumnHeaderCell>
                             <Table.ColumnHeaderCell>Tabla Origen</Table.ColumnHeaderCell>
-
+                            <Table.ColumnHeaderCell>Versión</Table.ColumnHeaderCell>
                             <Table.ColumnHeaderCell>Valores Originales</Table.ColumnHeaderCell>
                             <Table.ColumnHeaderCell>Valores Nuevos</Table.ColumnHeaderCell>
                             <Table.ColumnHeaderCell>Fecha</Table.ColumnHeaderCell>
@@ -61,6 +78,7 @@ export default function PistaAuditoria() {
                             <Table.Row key={item.id}>
                                 <Table.RowHeaderCell>{item.operacion}</Table.RowHeaderCell>
                                 <Table.Cell>{item.tabla_origen}</Table.Cell>
+                                <Table.Cell>{item.version}</Table.Cell>
                                 {item.valores_originales ? (
                                     <Table.Cell>
                                         <Table.Root>

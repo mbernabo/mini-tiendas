@@ -1,13 +1,13 @@
 import { Dialog, Flex } from '@radix-ui/themes';
 import { Cross1Icon } from '@radix-ui/react-icons';
 
-export default function Modal({ children, setOpenModal, title, description }) {
+export default function Modal({ children, handleToggleLoginModal, title, description }) {
     return (
         <Dialog.Content maxWidth="450px">
             <Flex justify="between" align="stretch">
                 <Dialog.Title>{title}</Dialog.Title>
                 <Dialog.Close>
-                    <Cross1Icon onClick={() => setOpenModal(false)} style={{ cursor: 'pointer' }} />
+                    <Cross1Icon style={{ cursor: 'pointer' }} />
                 </Dialog.Close>
             </Flex>
 

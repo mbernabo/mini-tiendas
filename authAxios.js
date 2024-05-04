@@ -1,8 +1,12 @@
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { toggleLoginModal } from './src/redux/modalsSlice';
 
 const instance = axios.create({
     baseURL: 'http://127.0.0.1:5000',
 });
+
+// const dispatch = useDispatch();
 
 // Interceptores para manejar el token de acceso
 instance.interceptors.request.use(
@@ -58,6 +62,7 @@ instance.interceptors.response.use(
         // Si vuelve a recibir un 401 después de intentar actualizar el token, muestra un mensaje de error
         if (error.response.status === 401) {
             console.log('Debe volver a loguearse');
+            // dispatch(toggleLoginModal());
         }
 
         return Promise.reject(error);

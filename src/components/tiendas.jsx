@@ -6,6 +6,8 @@ import { obtenerUnaTienda, obtenerTiendasUser } from '../../api';
 import TiendaInfo from './TiendaInfo';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchTiendas, setUserTiendas, toggleTodasLasTiendas } from '../redux/tiendasSlice';
+import { login, makeAdmin } from '../redux/userSlice';
+import instance from '../../authAxios';
 
 export default function Tiendas() {
     const dispatch = useDispatch();
@@ -22,16 +24,39 @@ export default function Tiendas() {
         const tiendasUser = await obtenerTiendasUser();
         console.log(tiendasUser);
         dispatch(setUserTiendas(tiendasUser));
-        dispatch(toggleTodasLasTiendas());
+        // dispatch(toggleTodasLasTiendas());
     }, [dispatch]);
 
     useEffect(() => {
-        if (status === 'idle' && todasLasTiendas) {
+        const checkLogin = async () => {
+            const response = await instance.get('api/users/check-login');
+            if (response.status === 200) {
+                dispatch(login());
+            }
+        };
+
+        const setAdminStatus = async () => {
+            try {
+                const response = await instance.get('/api/user/check-admin');
+                console.log(response.data.is_admin);
+                if (response.data.is_admin) {
+                    dispatch(makeAdmin());
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        if (!isAuthenticated) {
+            checkLogin();
+            setAdminStatus();
+        }
+
+        if (todasLasTiendas) {
             dispatch(fetchTiendas());
-        } else if (!todasLasTiendas) {
+        } else {
             handleMisTiendas();
         }
-    }, [dispatch, status, todasLasTiendas, handleMisTiendas]);
+    }, [dispatch, status, todasLasTiendas, handleMisTiendas, isAuthenticated]);
 
     async function handleClickTienda(tiendaId) {
         try {
@@ -56,7 +81,11 @@ export default function Tiendas() {
                     {todasLasTiendas ? 'Todas las Tiendas' : 'Mis Tiendas'}
                 </h1>
                 {isAuthenticated ? (
-                    <NavbarLoggedIn setTiendaInfo={setTiendaInfo} toogleTiendas={toogleTiendas} />
+                    <NavbarLoggedIn
+                        setTiendaInfo={setTiendaInfo}
+                        toogleTiendas={toogleTiendas}
+                        todasLasTiendas={todasLasTiendas}
+                    />
                 ) : (
                     <Navbar />
                 )}

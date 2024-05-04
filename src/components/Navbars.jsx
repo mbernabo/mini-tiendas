@@ -5,15 +5,23 @@ import { logOutUser } from '../../api';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, removeAdmin } from '../redux/userSlice';
+import { toggleLoginModal } from '../redux/modalsSlice';
 import { useState } from 'react';
 
 function Navbar() {
-    const [openLoginModal, setOpenLoginModal] = useState(false);
+    // const [openLoginModal, setOpenLoginModal] = useState(false);
     const [openRegisterModal, setOpenRegisterModal] = useState(false);
+    const openLoginModal = useSelector((state) => state.modals.openLoginModal);
+    const dispatch = useDispatch();
+
+    const handleToggleLoginModal = () => {
+        dispatch(toggleLoginModal());
+    };
+
     return (
         <div>
-            <Dialog.Root open={openLoginModal} onOpenChange={setOpenLoginModal}>
-                <Modal setOpenModal={setOpenLoginModal} title="Log In" description="Procedé a Loguearte">
+            <Dialog.Root open={openLoginModal} onOpenChange={handleToggleLoginModal}>
+                <Modal handleToggleLoginModal={handleToggleLoginModal} title="Log In" description="Procedé a Loguearte">
                     <LoginForm />
                 </Modal>
             </Dialog.Root>
@@ -31,7 +39,7 @@ function Navbar() {
             <Button
                 variant="soft"
                 style={{ cursor: 'pointer', marginRight: '0.5rem' }}
-                onClick={() => setOpenLoginModal(true)}
+                onClick={handleToggleLoginModal}
             >
                 Log In
             </Button>
@@ -45,12 +53,11 @@ function Navbar() {
         </div>
     );
 }
-function NavbarLoggedIn({ setTiendaInfo, toogleTiendas }) {
+function NavbarLoggedIn({ setTiendaInfo, toogleTiendas, todasLasTiendas }) {
     const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
     const [openCrearProductoModal, setOpenCrearProductoModal] = useState(false);
     const isAdmin = useSelector((state) => state.user.isAdmin);
     const dispatch = useDispatch();
-    const todasLasTiendas = useSelector((state) => state.todasLasTiendas);
 
     async function handleLogOut() {
         try {

@@ -5,16 +5,16 @@ import { Navbar, NavbarLoggedIn } from './Navbars';
 import { obtenerUnaTienda, obtenerTiendasUser, getFetch } from '../../api';
 import TiendaInfo from './TiendaInfo';
 import { useSelector, useDispatch } from 'react-redux';
-import { setTiendas, toggleTodasLasTiendas } from '../redux/tiendasSlice';
+import { setTiendas, toggleTodasLasTiendas, setTiendaInfo } from '../redux/tiendasSlice';
 import { login, makeAdmin, setUserId, setUserName } from '../redux/userSlice';
 import instance from '../../authAxios';
 
 export default function Tiendas() {
     const dispatch = useDispatch();
     const tiendas = useSelector((state) => state.tiendas.tiendas);
+    const tiendaInfo = useSelector((state) => state.tiendas.tiendaInfo);
     const todasLasTiendas = useSelector((state) => state.tiendas.todasLasTiendas);
     const isAuthenticated = useSelector((state) => state.user.loggedIn);
-    const [tiendaInfo, setTiendaInfo] = useState(null);
 
     const handleMisTiendas = useCallback(async () => {
         const tiendasUser = await obtenerTiendasUser();
@@ -68,7 +68,7 @@ export default function Tiendas() {
     async function handleClickTienda(tiendaId) {
         try {
             const data = await obtenerUnaTienda(tiendaId);
-            setTiendaInfo(data);
+            dispatch(setTiendaInfo(data));
             // setItems(data.items);
         } catch (error) {
             console.log(error);
@@ -89,7 +89,6 @@ export default function Tiendas() {
                 </h1>
                 {isAuthenticated ? (
                     <NavbarLoggedIn
-                        setTiendaInfo={setTiendaInfo}
                         toogleTiendas={toogleTiendas}
                         todasLasTiendas={todasLasTiendas}
                         fetchTiendas={fetchTiendas}
@@ -110,9 +109,9 @@ export default function Tiendas() {
 
             {tiendaInfo && (
                 <div style={{ marginTop: '3rem' }}>
-                    <TiendaInfo tiendaInfo={tiendaInfo} setTiendaInfo={setTiendaInfo} />
+                    <TiendaInfo tiendaInfo={tiendaInfo} />
                     <h3>{tiendaInfo.description}</h3>
-                    <TablaDeItems tiendaInfo={tiendaInfo} setTiendaInfo={setTiendaInfo} />
+                    <TablaDeItems tiendaInfo={tiendaInfo} />
                 </div>
             )}
         </>

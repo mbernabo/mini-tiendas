@@ -6,7 +6,13 @@ import { getFetch } from '../../api';
 import { obtenerTiendasUser } from '../../api';
 import { useSelector, useDispatch } from 'react-redux';
 import { login, makeAdmin, setUserId } from '../redux/userSlice';
-import { actualizarTienda, toggleTodasLasTiendas } from '../redux/tiendasSlice';
+import {
+    actualizarTienda,
+    toggleTodasLasTiendas,
+    removeItemFromTienda,
+    addItemToTienda,
+    setTiendaInfo,
+} from '../redux/tiendasSlice';
 import axios from 'axios';
 import instance from '../../authAxios';
 
@@ -258,10 +264,12 @@ function CrearTiendaForm({ fetchTiendas }) {
         </div>
     );
 }
-function CrearProductoForm({ setTiendaInfo }) {
+function CrearProductoForm() {
     const { register, handleSubmit } = useForm();
     const [respuesta, setRespuesta] = useState('');
+    // Estado local para mostrar tiendas en select
     const [tiendasUser, setTiendasUser] = useState([]);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -282,10 +290,7 @@ function CrearProductoForm({ setTiendaInfo }) {
             if (response.status === 201) {
                 const newItem = response.data;
                 setRespuesta('Producto creado exitosamente!');
-                setTiendaInfo((prevTiendaInfo) => ({
-                    ...prevTiendaInfo,
-                    items: [...(prevTiendaInfo.items ?? []), newItem],
-                }));
+                dispatch(addItemToTienda(newItem));
             } else {
                 setRespuesta('Bad Request');
             }
@@ -347,7 +352,7 @@ function CrearProductoForm({ setTiendaInfo }) {
     );
 }
 
-function EditarTiendaForm({ tiendaId, setTiendaInfo }) {
+function EditarTiendaForm({ tiendaId }) {
     const { register, handleSubmit, setValue } = useForm();
     const [respuesta, setRespuesta] = useState('');
     const dispatch = useDispatch();
@@ -374,7 +379,7 @@ function EditarTiendaForm({ tiendaId, setTiendaInfo }) {
                 setRespuesta('Tienda modificada exitosamente!');
                 const nuevaTienda = await response.data;
                 dispatch(actualizarTienda({ id: tiendaId, nuevosDatos: nuevaTienda }));
-                setTiendaInfo(nuevaTienda)
+                dispatch(setTiendaInfo(nuevaTienda));
             } else {
                 setRespuesta('Bad Request');
             }

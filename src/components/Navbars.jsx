@@ -53,7 +53,7 @@ function Navbar() {
         </div>
     );
 }
-function NavbarLoggedIn({ setTiendaInfo, toogleTiendas, todasLasTiendas, fetchTiendas }) {
+function NavbarLoggedIn({ toogleTiendas, todasLasTiendas, fetchTiendas }) {
     const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
     const [openCrearProductoModal, setOpenCrearProductoModal] = useState(false);
     const isAdmin = useSelector((state) => state.user.isAdmin);
@@ -90,7 +90,7 @@ function NavbarLoggedIn({ setTiendaInfo, toogleTiendas, todasLasTiendas, fetchTi
                     title="Crear Producto"
                     description="Registrate un nuevo producto"
                 >
-                    <CrearProductoForm setTiendaInfo={setTiendaInfo} />
+                    <CrearProductoForm  />
                 </Modal>
             </Dialog.Root>
             <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }} onClick={toogleTiendas}>

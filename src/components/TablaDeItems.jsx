@@ -1,18 +1,18 @@
 import { Table } from '@radix-ui/themes';
 import { TrashIcon } from '@radix-ui/react-icons';
 import instance from '../../authAxios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeItemFromTienda } from '../redux/tiendasSlice';
 
-export default function TablaDeItems({ tiendaInfo, setTiendaInfo }) {
+export default function TablaDeItems({ tiendaInfo }) {
+    const dispatch = useDispatch();
     const userId = useSelector((state) => state.user.userId);
 
     async function handleDeleteItem(itemId) {
         try {
             await instance.delete(`/api/item/${itemId}`);
             console.log('Item borrado exitosamente');
-            tiendaInfo.items;
-            const nuevosItems = tiendaInfo.items.filter((item) => item.id !== itemId);
-            setTiendaInfo((prevTiendaInfo) => ({ ...prevTiendaInfo, items: nuevosItems }));
+            dispatch(removeItemFromTienda(userId));
         } catch (error) {
             console.log('error');
         }

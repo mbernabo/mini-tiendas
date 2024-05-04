@@ -12,13 +12,25 @@ const tiendasSlice = createSlice({
     initialState: {
         tiendas: false,
         todasLasTiendas: true,
+        tiendaInfo: null,
     },
     reducers: {
         setTiendas(state, action) {
             state.tiendas = action.payload;
+            state.tiendaInfo = null;
         },
         toggleTodasLasTiendas(state) {
             state.todasLasTiendas = !state.todasLasTiendas;
+        },
+        setTiendaInfo(state, action) {
+            state.tiendaInfo = action.payload;
+        },
+        addItemToTienda(state, action) {
+            state.tiendaInfo.items.push(action.payload);
+        },
+        removeItemFromTienda(state, action) {
+            // Filtrar la lista de items para eliminar el item con el id proporcionado
+            state.tiendaInfo.items = state.tiendaInfo.items.filter((item) => item.id !== action.payload);
         },
         actualizarTienda(state, action) {
             const { id, nuevosDatos } = action.payload;
@@ -37,6 +49,14 @@ const tiendasSlice = createSlice({
     },
 });
 
-export const { actualizarTienda, setTiendas, toggleTodasLasTiendas, eliminarTienda } = tiendasSlice.actions;
+export const {
+    actualizarTienda,
+    setTiendas,
+    toggleTodasLasTiendas,
+    setTiendaInfo,
+    addItemToTienda,
+    removeItemFromTienda,
+    eliminarTienda,
+} = tiendasSlice.actions;
 
 export default tiendasSlice.reducer;

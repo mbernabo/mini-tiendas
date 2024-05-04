@@ -5,9 +5,9 @@ import { EditarTiendaForm } from './Forms';
 import { useState } from 'react';
 import Modal from './Modal';
 import { useDispatch, useSelector } from 'react-redux';
-import { eliminarTienda } from '../redux/tiendasSlice';
+import { eliminarTienda, setTiendaInfo } from '../redux/tiendasSlice';
 
-export default function TiendaInfo({ tiendaInfo, setTiendaInfo }) {
+export default function TiendaInfo({ tiendaInfo }) {
     const [openEditarTiendaModal, setOpenEditarTiendaModal] = useState(false);
     const userId = useSelector((state) => state.user.userId);
     const dispatch = useDispatch();
@@ -15,7 +15,7 @@ export default function TiendaInfo({ tiendaInfo, setTiendaInfo }) {
     async function handleDeleteStore(tiendaId) {
         await instance.delete(`/api/store/${tiendaId}`);
         dispatch(eliminarTienda({ id: tiendaId }));
-        setTiendaInfo(null);
+        dispatch(setTiendaInfo(null));
     }
 
     console.log(tiendaInfo);
@@ -49,7 +49,7 @@ export default function TiendaInfo({ tiendaInfo, setTiendaInfo }) {
                     title="Edite su Tienda"
                     description="Modifique la información de su tienda"
                 >
-                    <EditarTiendaForm tiendaId={tiendaInfo.id} setTiendaInfo={setTiendaInfo} />
+                    <EditarTiendaForm tiendaId={tiendaInfo.id} />
                 </Modal>
             </Dialog.Root>
         </>

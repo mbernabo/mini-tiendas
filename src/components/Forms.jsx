@@ -5,14 +5,8 @@ import { Flex } from '@radix-ui/themes';
 import { getFetch } from '../../api';
 import { obtenerTiendasUser } from '../../api';
 import { useSelector, useDispatch } from 'react-redux';
-import { login, makeAdmin, setUserId } from '../redux/userSlice';
-import {
-    actualizarTienda,
-    toggleTodasLasTiendas,
-    removeItemFromTienda,
-    addItemToTienda,
-    setTiendaInfo,
-} from '../redux/tiendasSlice';
+import { login, makeAdmin, setUserId, setUserName } from '../redux/userSlice';
+import { actualizarTienda, toggleTodasLasTiendas, addItemToTienda, setTiendaInfo } from '../redux/tiendasSlice';
 import axios from 'axios';
 import instance from '../../authAxios';
 
@@ -54,7 +48,10 @@ function LoginForm() {
                     localStorage.setItem('refresh_token', response.data.refresh_token);
                     console.log(response.data);
                     const userId = response.data.user_id;
+                    const userName = response.data.email;
                     dispatch(setUserId(userId));
+                    dispatch(setUserName(userName));
+
                     setAdminStatus();
 
                     // Actualizar estado de la aplicación

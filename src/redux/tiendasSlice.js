@@ -13,16 +13,20 @@ const tiendasSlice = createSlice({
         tiendas: false,
         todasLasTiendas: true,
         tiendaInfo: null,
+        displaySearch: false,
+        resultadosSearch: [],
     },
     reducers: {
         setTiendas(state, action) {
             state.tiendas = action.payload;
             state.tiendaInfo = null;
+            state.displaySearch = false;
         },
         toggleTodasLasTiendas(state) {
             state.todasLasTiendas = !state.todasLasTiendas;
         },
         setTiendaInfo(state, action) {
+            state.displaySearch = false;
             state.tiendaInfo = action.payload;
         },
         addItemToTienda(state, action) {
@@ -46,6 +50,18 @@ const tiendasSlice = createSlice({
                 state.tiendas.splice(tiendaIndex, 1);
             }
         },
+        setResultados(state, action) {
+            state.tiendaInfo = null;
+            state.resultadosSearch = action.payload;
+            state.displaySearch = true;
+        },
+        mostrarResultados(state) {
+            state.tiendaInfo = null;
+            state.displaySearch = true;
+        },
+        ocultarResultados(state) {
+            state.displaySearch = false;
+        },
     },
 });
 
@@ -57,6 +73,9 @@ export const {
     addItemToTienda,
     removeItemFromTienda,
     eliminarTienda,
+    setResultados,
+    mostrarResultados,
+    ocultarResultados,
 } = tiendasSlice.actions;
 
 export default tiendasSlice.reducer;

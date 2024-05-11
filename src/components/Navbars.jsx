@@ -1,10 +1,8 @@
 import { Dialog, Button } from '@radix-ui/themes';
 import { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm } from './Forms';
 import Modal from './Modal';
-import { logOutUser } from '../../api';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { logout, removeAdmin } from '../redux/userSlice';
 import { toggleLoginModal } from '../redux/modalsSlice';
 import { useState } from 'react';
 
@@ -57,21 +55,8 @@ function NavbarLoggedIn({ toogleTiendas, todasLasTiendas, fetchTiendas }) {
     const [openCrearTiendaModal, setOpenCrearTiendaModal] = useState(false);
     const [openCrearProductoModal, setOpenCrearProductoModal] = useState(false);
     const isAdmin = useSelector((state) => state.user.isAdmin);
-    const userName = useSelector((state) => state.user.userName);
 
-    const dispatch = useDispatch();
-
-    async function handleLogOut() {
-        try {
-            await logOutUser();
-            dispatch(logout());
-            dispatch(removeAdmin());
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-        } catch (error) {
-            console.log('Error al desloguear', error);
-        }
-    }
+    
     return (
         <div>
             <Dialog.Root open={openCrearTiendaModal} onOpenChange={setOpenCrearTiendaModal}>
@@ -120,12 +105,7 @@ function NavbarLoggedIn({ toogleTiendas, todasLasTiendas, fetchTiendas }) {
                     </Link>
                 </>
             )}
-            <Button variant="ghost" style={{ cursor: 'pointer', marginRight: '0.5rem' }} onClick={handleLogOut}>
-                Log Out
-            </Button>
-            <Button variant="ghost" style={{ cursor: 'pointer' }}>
-                {userName}
-            </Button>
+            
         </div>
     );
 }

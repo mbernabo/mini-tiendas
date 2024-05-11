@@ -12,7 +12,7 @@ export default function TablaDeItems({ tiendaInfo }) {
         try {
             await instance.delete(`/api/item/${itemId}`);
             console.log('Item borrado exitosamente');
-            dispatch(removeItemFromTienda(userId));
+            dispatch(removeItemFromTienda(itemId));
         } catch (error) {
             console.log('error');
         }

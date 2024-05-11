@@ -1,7 +1,7 @@
 // import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Flex } from '@radix-ui/themes';
+import { Flex, Button } from '@radix-ui/themes';
 import { getFetch } from '../../api';
 import { obtenerTiendasUser } from '../../api';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,6 +9,8 @@ import { login, makeAdmin, setUserId, setUserName } from '../redux/userSlice';
 import { actualizarTienda, toggleTodasLasTiendas, addItemToTienda, setTiendaInfo } from '../redux/tiendasSlice';
 import axios from 'axios';
 import instance from '../../authAxios';
+import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import { setResultados } from '../redux/tiendasSlice';
 
 const BASE_URL = 'http://127.0.0.1:5000';
 // const BASE_URL = 'https://mini-tiendas-api-qq9a.onrender.com';
@@ -427,4 +429,43 @@ function EditarTiendaForm({ tiendaId }) {
     );
 }
 
-export { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm, EditarTiendaForm };
+function SearchForm() {
+    const { register, handleSubmit } = useForm();
+    const dispatch = useDispatch();
+
+    const onSubmit = async (data) => {
+        const response = await fetch('http://127.0.0.1:5000/api/items?' + new URLSearchParams({ q: data.q }));
+        const results = await response.json();
+        console.log(results);
+        dispatch(setResultados(results));
+    };
+
+    return (
+        <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: '300px', margin: 'auto' }}>
+            <div
+                style={{
+                    marginLeft: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <input
+                    {...register('q', { required: true, maxLength: 70 })}
+                    style={{
+                        flex: '1',
+                        marginRight: '0.5rem',
+                        padding: '0.5rem',
+                        fontSize: '14px',
+                        border: '1px solid #ccc',
+                        borderRadius: '4px',
+                    }}
+                />
+                <Button type="submit" style={{ display: 'flex', alignItems: 'center', marginLeft: '0.5rem' }}>
+                    <MagnifyingGlassIcon height="16" width="16" />
+                </Button>
+            </div>
+        </form>
+    );
+}
+export { LoginForm, RegisterForm, CrearTiendaForm, CrearProductoForm, EditarTiendaForm, SearchForm };

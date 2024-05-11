@@ -8,6 +8,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setTiendas, toggleTodasLasTiendas, setTiendaInfo } from '../redux/tiendasSlice';
 import { login, makeAdmin, setUserId, setUserName } from '../redux/userSlice';
 import instance from '../../authAxios';
+import NavbarUserInfo from './NavbarUserInfo';
+import { SearchForm } from './Forms';
+import ResultadosBusqueda from './ResultadosBusqueda';
 
 export default function Tiendas() {
     const dispatch = useDispatch();
@@ -15,19 +18,18 @@ export default function Tiendas() {
     const tiendaInfo = useSelector((state) => state.tiendas.tiendaInfo);
     const todasLasTiendas = useSelector((state) => state.tiendas.todasLasTiendas);
     const isAuthenticated = useSelector((state) => state.user.loggedIn);
+    const busquedaUser = useSelector((state) => state.tiendas.displaySearch);
 
     const handleMisTiendas = useCallback(async () => {
         const tiendasUser = await obtenerTiendasUser();
         console.log(tiendasUser);
         dispatch(setTiendas(tiendasUser));
-        // dispatch(toggleTodasLasTiendas());
     }, [dispatch]);
 
     const fetchTiendas = useCallback(async () => {
         const tiendas = await getFetch('stores');
         console.log(tiendas);
         dispatch(setTiendas(tiendas));
-        // dispatch(toggleTodasLasTiendas());
     }, [dispatch]);
 
     useEffect(() => {
@@ -84,18 +86,27 @@ export default function Tiendas() {
             <div
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}
             >
-                <h1 style={{ cursor: 'pointer' }} onClick={toogleTiendas}>
-                    {todasLasTiendas ? 'Todas las Tiendas' : 'Mis Tiendas'}
-                </h1>
                 {isAuthenticated ? (
-                    <NavbarLoggedIn
-                        toogleTiendas={toogleTiendas}
-                        todasLasTiendas={todasLasTiendas}
-                        fetchTiendas={fetchTiendas}
-                    />
+                    <h1 style={{ cursor: 'pointer' }} onClick={toogleTiendas}>
+                        {todasLasTiendas ? 'Todas las Tiendas' : 'Mis Tiendas'}
+                    </h1>
                 ) : (
-                    <Navbar />
+                    <h1>Todas las Tiendas</h1>
                 )}
+
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {isAuthenticated ? (
+                        <NavbarLoggedIn
+                            toogleTiendas={toogleTiendas}
+                            todasLasTiendas={todasLasTiendas}
+                            fetchTiendas={fetchTiendas}
+                        />
+                    ) : (
+                        <Navbar />
+                    )}
+                    <SearchForm />
+                    {isAuthenticated && <NavbarUserInfo />}
+                </div>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                 {tiendas ? (
@@ -114,6 +125,7 @@ export default function Tiendas() {
                     <TablaDeItems tiendaInfo={tiendaInfo} />
                 </div>
             )}
+            {busquedaUser && <ResultadosBusqueda />}
         </>
     );
 }

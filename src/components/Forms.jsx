@@ -9,7 +9,7 @@ import { login, makeAdmin, setUserId, setUserName } from '../redux/userSlice';
 import { actualizarTienda, toggleTodasLasTiendas, addItemToTienda, setTiendaInfo } from '../redux/tiendasSlice';
 import axios from 'axios';
 import instance from '../../authAxios';
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import { MagnifyingGlassIcon, Cross2Icon } from '@radix-ui/react-icons';
 import { setResultados } from '../redux/tiendasSlice';
 
 const BASE_URL = 'http://127.0.0.1:5000';
@@ -430,14 +430,20 @@ function EditarTiendaForm({ tiendaId }) {
 }
 
 function SearchForm() {
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, reset } = useForm();
     const dispatch = useDispatch();
+    const [query, setQuery] = useState('');
 
     const onSubmit = async (data) => {
         const response = await fetch('http://127.0.0.1:5000/api/items?' + new URLSearchParams({ q: data.q }));
         const results = await response.json();
         console.log(results);
         dispatch(setResultados(results));
+    };
+
+    const handleClear = () => {
+        setQuery('');
+        reset({ q: '' });
     };
 
     return (
@@ -452,6 +458,8 @@ function SearchForm() {
             >
                 <input
                     {...register('q', { required: true, maxLength: 70 })}
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
                     style={{
                         flex: '1',
                         marginRight: '0.5rem',
@@ -461,6 +469,11 @@ function SearchForm() {
                         borderRadius: '4px',
                     }}
                 />
+                {query && (
+                    <Button type="button" style={{ display: 'flex', alignItems: 'center' }} onClick={handleClear}>
+                        <Cross2Icon height="16" width="16" />
+                    </Button>
+                )}
                 <Button type="submit" style={{ display: 'flex', alignItems: 'center', marginLeft: '0.5rem' }}>
                     <MagnifyingGlassIcon height="16" width="16" />
                 </Button>

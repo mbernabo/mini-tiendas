@@ -2,6 +2,7 @@ import { Button } from '@radix-ui/themes';
 import { useSelector, useDispatch } from 'react-redux';
 import { logOutUser } from '../../api';
 import { logout, removeAdmin } from '../redux/userSlice';
+import ls from '../../secureLS';
 
 export default function NavbarUserInfo() {
     const userName = useSelector((state) => state.user.userName);
@@ -12,8 +13,8 @@ export default function NavbarUserInfo() {
             await logOutUser();
             dispatch(logout());
             dispatch(removeAdmin());
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
+            ls.remove('access_token');
+            ls.remove('refresh_token');
         } catch (error) {
             console.log('Error al desloguear', error);
         }

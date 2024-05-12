@@ -1,7 +1,5 @@
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { toggleLoginModal } from './src/redux/modalsSlice';
-
+import ls from './secureLS';
 const instance = axios.create({
     baseURL: 'http://127.0.0.1:5000',
 });
@@ -11,7 +9,7 @@ const instance = axios.create({
 // Interceptores para manejar el token de acceso
 instance.interceptors.request.use(
     (config) => {
-        const accessToken = localStorage.getItem('access_token');
+        const accessToken = ls.get('access_token');
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
@@ -30,7 +28,7 @@ instance.interceptors.response.use(
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
-            const refreshToken = localStorage.getItem('refresh_token');
+            const refreshToken = ls.get('refresh_token');
             if (refreshToken) {
                 // Intentar obtener un nuevo token de acceso
                 try {
@@ -46,8 +44,8 @@ instance.interceptors.response.use(
 
                     const newAccessToken = response.data.access_token;
 
-                    // Actualizar el token de acceso en localStorage
-                    localStorage.setItem('access_token', newAccessToken);
+                    // Actualizar el token de acceso en LS Secure
+                    ls.set('access_token', newAccessToken);
 
                     // Reintentar la solicitud original con el nuevo token de acceso
                     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

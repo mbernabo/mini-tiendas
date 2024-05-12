@@ -11,6 +11,7 @@ import axios from 'axios';
 import instance from '../../authAxios';
 import { MagnifyingGlassIcon, Cross2Icon } from '@radix-ui/react-icons';
 import { setResultados } from '../redux/tiendasSlice';
+import ls from '../../secureLS';
 
 const BASE_URL = 'http://127.0.0.1:5000';
 // const BASE_URL = 'https://mini-tiendas-api-qq9a.onrender.com';
@@ -45,9 +46,9 @@ function LoginForm() {
             .then((response) => {
                 // Verificar si la solicitud fue exitosa
                 if (response.status === 200) {
-                    // Guardar tokens en localStorage
-                    localStorage.setItem('access_token', response.data.access_token);
-                    localStorage.setItem('refresh_token', response.data.refresh_token);
+                    // Guardar tokens en LS Secure
+                    ls.set('access_token', response.data.access_token);
+                    ls.set('refresh_token', response.data.refresh_token);
                     console.log(response.data);
                     const userId = response.data.user_id;
                     const userName = response.data.email;
@@ -471,11 +472,11 @@ function SearchForm() {
                 />
                 {query && (
                     <Button type="button" style={{ display: 'flex', alignItems: 'center' }} onClick={handleClear}>
-                        <Cross2Icon height="16" width="16" />
+                        <Cross2Icon height="16" width="16" style={{ cursor: 'pointer' }} />
                     </Button>
                 )}
                 <Button type="submit" style={{ display: 'flex', alignItems: 'center', marginLeft: '0.5rem' }}>
-                    <MagnifyingGlassIcon height="16" width="16" />
+                    <MagnifyingGlassIcon height="16" width="16" style={{ cursor: 'pointer' }} />
                 </Button>
             </div>
         </form>

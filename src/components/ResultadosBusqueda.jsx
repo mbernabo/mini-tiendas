@@ -1,7 +1,6 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table, Heading, Text, Card } from '@radix-ui/themes';
 import { useDispatch, useSelector } from 'react-redux';
-import { useState } from 'react';
 import { ocultarResultados } from '../redux/tiendasSlice';
 
 export default function ResultadosBusqueda() {

@@ -59,8 +59,9 @@ instance.interceptors.response.use(
 
         // Si vuelve a recibir un 401 después de intentar actualizar el token, muestra un mensaje de error
         if (error.response.status === 401) {
-            console.log('Debe volver a loguearse');
-            // dispatch(toggleLoginModal());
+            const customError = new Error('Debe volver a loguearse');
+            customError.status = 401; // Podrías agregar más propiedades personalizadas si lo necesitas
+            return Promise.reject(customError);
         }
 
         return Promise.reject(error);

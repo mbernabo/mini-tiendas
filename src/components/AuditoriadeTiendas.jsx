@@ -15,7 +15,7 @@ export default function AuditoriaDeTiendas({ setAccesoHabilitado }) {
                 setData(response.data);
             } catch (error) {
                 console.log(error);
-                if (error.response.status === 401) {
+                if (error.status === 401) {
                     setAccesoHabilitado(false);
                     console.log('No está autorizado a ingresar a esta ruta!');
                 }

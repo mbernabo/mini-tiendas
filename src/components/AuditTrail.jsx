@@ -4,11 +4,21 @@ import Modal from './Modal';
 import { useEffect, useState } from 'react';
 import instance from '../../authAxios';
 import ValoresPistaAuditoria from './ValoresPistaAuditoria';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleLoginModal } from '../redux/modalsSlice';
+import { LoginForm } from './Forms';
 
 export default function AuditTrail({ setAccesoHabilitado }) {
     const [open, setOpen] = useState(false);
     const [item, setItem] = useState({});
+    const openLoginModal = useSelector((state) => state.modals.openLoginModal);
+
     const [data, setAuditData] = useState(null);
+    const dispatch = useDispatch();
+
+    const handleToggleLoginModal = () => {
+        dispatch(toggleLoginModal());
+    };
 
     const [valoresPista, setValoresPista] = useState(null);
 
@@ -19,14 +29,18 @@ export default function AuditTrail({ setAccesoHabilitado }) {
                 setAuditData(response.data);
             } catch (error) {
                 console.log(error);
-                if (error.response.status === 401) {
-                    setAccesoHabilitado(false);
-                    console.log('No está autorizado a ingresar a esta ruta!');
+                if (error.status === 401) {
+                    dispatch(toggleLoginModal());
+                    // Pruebo así para volver a pedir la información
+                    // fetchAuditData();
+
+                    // setAccesoHabilitado(false);
+                    // console.log('No está autorizado a ingresar a esta ruta!');
                 }
             }
         };
         fetchAuditData();
-    }, [setAccesoHabilitado]);
+    }, [setAccesoHabilitado, dispatch]);
 
     function handleMostrarPista(item) {
         const valoresOriginalesParseados = item.valores_originales ? JSON.parse(item.valores_originales) : null;
@@ -39,6 +53,15 @@ export default function AuditTrail({ setAccesoHabilitado }) {
 
     return (
         <>
+            <Dialog.Root open={openLoginModal} onOpenChange={handleToggleLoginModal}>
+                <Modal
+                    handleToggleLoginModal={handleToggleLoginModal}
+                    title="Log In"
+                    description="Necesita volver a loguearse"
+                >
+                    <LoginForm />
+                </Modal>
+            </Dialog.Root>
             <Heading as="h3">Audit Trail completo</Heading>
             {data ? (
                 <div style={{ marginTop: '30px' }}>
@@ -68,7 +91,7 @@ export default function AuditTrail({ setAccesoHabilitado }) {
                                     <Table.Cell>{item.registro_asociado}</Table.Cell>
                                     <Table.Cell>{item.operacion}</Table.Cell>
                                     <Table.Cell>{item.version}</Table.Cell>
-                                    <Table.Cell>{item.fecha}</Table.Cell>
+                                    <Table.Cell>{item.fecha_tz}</Table.Cell>
                                     <Table.Cell>{item.comentarios}</Table.Cell>
                                     <Table.Cell
                                         onClick={() => handleMostrarPista(item)}

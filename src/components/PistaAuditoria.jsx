@@ -3,19 +3,41 @@ import { useParams } from 'react-router-dom';
 import instance from '../../authAxios';
 import { Heading, Table, Text, Button } from '@radix-ui/themes';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { toggleLoginModal } from '../redux/modalsSlice';
+import { Dialog } from '@radix-ui/themes';
+import Modal from './Modal';
+import { LoginForm } from './Forms';
+import { useSelector } from 'react-redux';
+
 export default function PistaAuditoria() {
     const { idPista } = useParams();
     const [data, setData] = useState(null);
+    const openLoginModal = useSelector((state) => state.modals.openLoginModal);
+
+    const dispatch = useDispatch();
+
+    const handleToggleLoginModal = () => {
+        dispatch(toggleLoginModal());
+    };
 
     useEffect(() => {
         async function fetchPistaAuditoria() {
-            const response = await instance.get(`/api/auditoria/pista/${idPista}`);
-            const first_data = response.data;
-            const parsed_data = first_data.map((item) => ({
-                ...item,
-                valores_originales: item.valores_originales ? JSON.parse(item.valores_originales) : null,
-                valores_nuevos: item.valores_nuevos ? JSON.parse(item.valores_nuevos) : null,
-            }));
+            try {
+                const response = await instance.get(`/api/auditoria/pista/${idPista}`);
+                const first_data = response.data;
+                const parsed_data = first_data.map((item) => ({
+                    ...item,
+                    valores_originales: item.valores_originales ? JSON.parse(item.valores_originales) : null,
+                    valores_nuevos: item.valores_nuevos ? JSON.parse(item.valores_nuevos) : null,
+                }));
+                setData(parsed_data);
+                console.log(parsed_data);
+            } catch (error) {
+                if (error.status === 401) {
+                    dispatch(toggleLoginModal());
+                }
+            }
 
             // Idea inicial para pasar todo el registro de auditoría como texto
             // Podría poner un botón con tooltip que diga "explicar" o mostrar detalle y mostrar esto
@@ -26,14 +48,21 @@ export default function PistaAuditoria() {
             //         evento:
             //     }
             // })
-            setData(parsed_data);
-            console.log(parsed_data);
         }
 
         fetchPistaAuditoria();
-    }, [idPista]);
+    }, [idPista, dispatch]);
     return (
         <div>
+            <Dialog.Root open={openLoginModal} onOpenChange={handleToggleLoginModal}>
+                <Modal
+                    handleToggleLoginModal={handleToggleLoginModal}
+                    title="Log In"
+                    description="Necesita volver a loguearse"
+                >
+                    <LoginForm />
+                </Modal>
+            </Dialog.Root>
             <div
                 style={{
                     display: 'flex',
